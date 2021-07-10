@@ -2,6 +2,9 @@
 .idea
 *.iml
 
+# Secrets
+.env
+
 # Logs
 logs
 *.log

@@ -1,0 +1,18 @@
+{
+  "authConfig": {
+    "loginUrl": "https://login.microsoftonline.com/common/oauth2/v2.0/authorize",
+    "tokenUrl": "https://login.microsoftonline.com/common/oauth2/v2.0/token",
+    "clientId": "{{sorClientId}}",
+    "clientSecret": "{{sorClientSecret}}",
+    "username": "{{sorUsername}}",
+    "password": "{{sorPassword}}",
+    "scopes": [
+      "Files.Read.All",
+      "offline_access"
+    ],
+    "loginParams": {}
+  },
+  "enabled": true,
+  "blockedUsers": [
+  ]
+}

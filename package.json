@@ -2,13 +2,14 @@
   "name": "inp-client",
   "version": "1.0.0",
   "description": "Client to communicate with Integration platform",
-  "main": "src/inp-client.ts",
+  "main": "./dist/src/inp-client.js",
   "bin": {
-    "inp-client": "./dist/inp-client.js"
+    "inp-client": "./dist/src/inp-client.js"
   },
   "scripts": {
     "build": "tsc",
-    "inp-client": "node ./dist/inp-client.js",
+    "prepublish": "npm run build",
+    "inp-client": "node ./dist/src/inp-client.js",
     "create-integration": "inp-client -- -p action=create-integration",
     "update-integration": "inp-client -- -p action=update-integration",
     "test": "echo \"not yet\""
@@ -28,12 +29,14 @@
     "@types/lodash": "^4.14.168",
     "@types/mocha": "^8.2.1",
     "@types/node": "^14.14.28",
+    "@types/qs": "^6.9.7",
     "abab": "^2.0.5",
     "babel-loader": "^8.1.0",
     "babel-plugin-module-resolver": "^4.1.0",
     "chai": "^4.3.0",
     "cross-env": "^7.0.3",
     "deep-equal-in-any-order": "^1.0.28",
+    "dotenv": "^8.6.0",
     "isomorphic-fetch": "^3.0.0",
     "mocha": "^8.3.0",
     "source-map-loader": "^1.1.0",
@@ -46,9 +49,9 @@
     "webpack-cli": "^3.3.12"
   },
   "dependencies": {
-    "dotenv": "^8.2.0",
-    "lodash": "^4.17.21",
     "chalk": "^4.1.1",
-    "commander": "^8.0.0"
+    "commander": "^8.0.0",
+    "lodash": "^4.17.21",
+    "qs": "^6.10.1"
   }
 }

@@ -1,0 +1,218 @@
+{
+  "integration": {
+    "vendor": "Citrix Systems, Inc.",
+    "title": "Test Integration",
+    "description": "Test integration",
+    "iconUrl": "https://iws-prod-global-customicons-cdn-endpoint.azureedge.net/image/7TwzpadhUzR27KW3izO4fMUUccBxSCoY.png",
+    "createdAtUtc": "2021-07-10T21:32:20.3426823",
+    "authType": "OAuth2",
+    "customAuthInputKeys": null,
+    "sorUrl": "https://coincap.io",
+    "sor": "Hello World",
+    "requiredScopes": [],
+    "version": "1.0",
+    "enabled": false,
+    "oAuthTokenPath": "/",
+    "authenticated": false,
+    "isRegistered": false,
+    "lastModifiedAtUtc": "2021-07-10T21:32:20.3426823",
+    "categories": [],
+    "endpoints": [],
+    "_links": [
+      {
+        "rel": "https://identifiers-api.cloud.com/integration-service/authenticate",
+        "href": "/integrations/5896be62-52f5-4e58-923a-892d5e264412/authenticate",
+        "method": "Post",
+        "payload": null
+      },
+      {
+        "rel": "https://identifiers-api.cloud.com/common/details",
+        "href": "/integrations/5896be62-52f5-4e58-923a-892d5e264412",
+        "method": "Get",
+        "payload": null
+      },
+      {
+        "rel": "https://identifiers-api.cloud.com/integration-service/create_registration",
+        "href": "/integrations/5896be62-52f5-4e58-923a-892d5e264412/registrations",
+        "method": "Post",
+        "payload": {
+          "authConfig": {
+            "loginUrl": "about:blank",
+            "tokenUrl": "about:blank",
+            "clientId": "",
+            "clientSecret": "",
+            "scopes": [],
+            "loginParams": null,
+            "baseUrl": null
+          },
+          "enabled": true,
+          "blockedUsers": []
+        }
+      },
+      {
+        "rel": "https://identifiers-api.cloud.com/integration-service/get_scripts",
+        "href": "/integrations/5896be62-52f5-4e58-923a-892d5e264412/scripts",
+        "method": "Get",
+        "payload": null
+      },
+      {
+        "rel": "https://identifiers-api.cloud.com/common/replace",
+        "href": "/integrations/5896be62-52f5-4e58-923a-892d5e264412",
+        "method": "Put",
+        "payload": {
+          "vendor": "",
+          "title": "",
+          "description": "",
+          "iconUrl": "about:blank",
+          "authType": "OAuth2",
+          "customAuthInputKeys": [],
+          "sorUrl": "about:blank",
+          "sor": "",
+          "requiredScopes": [],
+          "version": "",
+          "oAuthTokenPath": ""
+        }
+      },
+      {
+        "rel": "https://identifiers-api.cloud.com/integration-service/create_endpoint",
+        "href": "/integrations/5896be62-52f5-4e58-923a-892d5e264412/endpoints",
+        "method": "Post",
+        "payload": {
+          "name": "",
+          "httpMethod": "Post",
+          "endpointType": "OnDemand",
+          "category": "",
+          "endpointScriptRequests": [
+            {
+              "scriptId": "00000000-0000-0000-0000-000000000000",
+              "functionName": "",
+              "endpointScriptType": "OnExecution"
+            }
+          ]
+        }
+      },
+      {
+        "rel": "https://identifiers-api.cloud.com/integration-service/create_script",
+        "href": "/integrations/5896be62-52f5-4e58-923a-892d5e264412/scripts?name=script-name&language=Js",
+        "method": "Post",
+        "payload": "script-code"
+      },
+      {
+        "rel": "https://identifiers-api.cloud.com/common/delete",
+        "href": "/integrations/5896be62-52f5-4e58-923a-892d5e264412",
+        "method": "Delete",
+        "payload": null
+      }
+    ],
+    "id": "5896be62-52f5-4e58-923a-892d5e264412"
+  },
+  "scripts": {
+    "id": "1c77f393-c6ce-420b-a719-4cf61b09791b",
+    "name": "hello-world",
+    "code": "redacted",
+    "language": "Js",
+    "createdAtUtc": "2021-07-10T21:32:20.4163939+00:00",
+    "lastModifiedAtUtc": "2021-07-10T21:32:20.4163939+00:00",
+    "_links": [
+      {
+        "rel": "https://identifiers-api.cloud.com/common/replace",
+        "href": "/integrations/5896be62-52f5-4e58-923a-892d5e264412/scripts/1c77f393-c6ce-420b-a719-4cf61b09791b?name=hello-world&language=Js",
+        "method": "Put",
+        "payload": "script-code"
+      },
+      {
+        "rel": "https://identifiers-api.cloud.com/common/delete",
+        "href": "/integrations/5896be62-52f5-4e58-923a-892d5e264412/scripts/1c77f393-c6ce-420b-a719-4cf61b09791b",
+        "method": "Delete",
+        "payload": null
+      }
+    ]
+  },
+  "endpoints": [
+    {
+      "name": "hello-world",
+      "httpMethod": "Post",
+      "endpointType": "OnDemand",
+      "category": "demo",
+      "endpointScripts": [
+        {
+          "endpointId": "09a09150-2299-41f1-90b1-fac62ec4fa99",
+          "scriptId": "1c77f393-c6ce-420b-a719-4cf61b09791b",
+          "functionName": "helloWorld",
+          "endpointScriptType": "OnExecution"
+        }
+      ],
+      "_links": [
+        {
+          "rel": "https://identifiers-api.cloud.com/common/replace",
+          "href": "/integrations/5896be62-52f5-4e58-923a-892d5e264412/endpoints/09a09150-2299-41f1-90b1-fac62ec4fa99",
+          "method": "Put",
+          "payload": {
+            "name": "",
+            "httpMethod": "Post",
+            "endpointType": "OnDemand",
+            "category": "",
+            "endpointScriptRequests": [
+              {
+                "scriptId": "00000000-0000-0000-0000-000000000000",
+                "functionName": "",
+                "endpointScriptType": "OnExecution"
+              }
+            ]
+          }
+        },
+        {
+          "rel": "https://identifiers-api.cloud.com/common/delete",
+          "href": "/integrations/5896be62-52f5-4e58-923a-892d5e264412/endpoints/09a09150-2299-41f1-90b1-fac62ec4fa99",
+          "method": "Delete",
+          "payload": null
+        }
+      ]
+    }
+  ],
+  "registration": {
+    "authConfig": {
+      "loginUrl": "https://login.microsoftonline.com/common/oauth2/v2.0/authorize",
+      "tokenUrl": "https://login.microsoftonline.com/common/oauth2/v2.0/token",
+      "clientId": "{{sorClientId}}",
+      "clientSecret": "{{sorClientSecret}}",
+      "scopes": [
+        "https://graph.microsoft.com/Files.ReadWrite"
+      ],
+      "loginParams": {},
+      "baseUrl": null
+    },
+    "customerId": "igp-dev",
+    "enabled": true,
+    "blockedUsers": [],
+    "_links": [
+      {
+        "rel": "https://identifiers-api.cloud.com/common/details",
+        "href": "/integrations/5896be62-52f5-4e58-923a-892d5e264412/registrations/92d392ff-2dc5-4c77-b28d-0e691a9c9df5",
+        "method": "Get",
+        "payload": null
+      },
+      {
+        "rel": "https://identifiers-api.cloud.com/common/replace",
+        "href": "/integrations/5896be62-52f5-4e58-923a-892d5e264412/registrations/92d392ff-2dc5-4c77-b28d-0e691a9c9df5",
+        "method": "Put",
+        "payload": {
+          "authConfig": {
+            "loginUrl": "about:blank",
+            "tokenUrl": "about:blank",
+            "clientId": "",
+            "clientSecret": "",
+            "scopes": [
+              "https://graph.microsoft.com/Files.ReadWrite"
+            ],
+            "loginParams": {},
+            "baseUrl": null
+          },
+          "enabled": true,
+          "blockedUsers": []
+        }
+      }
+    ],
+    "id": "92d392ff-2dc5-4c77-b28d-0e691a9c9df5"
+  }
+}

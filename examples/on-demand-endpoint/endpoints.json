@@ -1,0 +1,15 @@
+[
+    {
+        "name": "hello-world",
+        "httpMethod": "Post",
+        "endpointType": "onDemand",
+        "category": "demo",
+        "endpointScripts": [
+            {
+                "scriptName": "hello-world",
+                "functionName": "helloWorld",
+                "endpointScriptType": "onExecution"
+            }
+        ]
+    }
+]
