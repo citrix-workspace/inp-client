@@ -8,7 +8,8 @@
             {
                 "scriptName": "hello-world",
                 "functionName": "helloWorld",
-                "endpointScriptType": "onExecution"
+                "endpointScriptType": "onExecution",
+                "demoPayload": "{\"query\": \"value ccc\"}"
             }
         ]
     }

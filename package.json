@@ -12,7 +12,7 @@
     "inp-client": "node ./dist/src/inp-client.js",
     "create-integration": "inp-client -- -p action=create-integration",
     "update-integration": "inp-client -- -p action=update-integration",
-    "test": "echo \"not yet\""
+    "test": "cross-env NODE_ENV=test  mocha 'test/**.spec.js' 'test/**.spec.ts' 'src/**/*.spec.ts*' 'src/**/*.spec.js*' -r ts-node/register -r test/mochaSetup.ts --recursive"
   },
   "repository": {
     "type": "git",

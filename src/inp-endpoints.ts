@@ -39,7 +39,7 @@ export function createIntegration(integrationPayload: string) {
         .then(fillResourceId('integrations'))
 }
 
-export async function uploadJavascript(integrationId: string, scriptName: string, code: string) {
+export async function uploadJavascript(integrationId: string, scriptName: string, code: string): Promise<any> {
     const parameters = {
         name: scriptName,
         language: 'js'
@@ -57,19 +57,18 @@ export async function uploadJavascript(integrationId: string, scriptName: string
 
 export async function createEndpoints(integrationId: string, endpointsPayload: string) {
     const url = `${INP_BASE_URL}/integrations/${integrationId}/endpoints`
-    console.log(`createEndpoints url=${url}, payload=${endpointsPayload}`)
+    // console.log(`createEndpoints url=${url}, payload=${endpointsPayload}`)
     const options: RequestInit = {
         ...defaultPostOptions,
         body: endpointsPayload,
     }
     return fetch(url, options)
         .then(getSuccessJson(new Error(`Create endpoints for integrationId=${integrationId} failed`)))
-        // .then(fillResourceId('integrations'))
 }
 
 export async function createRegistration(integrationId: string, registrationPayload: string) {
     const url = `${INP_BASE_URL}/integrations/${integrationId}/registrations`
-    console.log(`createRegistration url=${url}, payload=${registrationPayload}`)
+    // console.log(`createRegistration url=${url}, payload=${registrationPayload}`)
     const options: RequestInit = {
         ...defaultPostOptions,
         body: registrationPayload,

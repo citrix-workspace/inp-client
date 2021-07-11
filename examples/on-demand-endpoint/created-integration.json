@@ -4,7 +4,7 @@
     "title": "Test Integration",
     "description": "Test integration",
     "iconUrl": "https://iws-prod-global-customicons-cdn-endpoint.azureedge.net/image/7TwzpadhUzR27KW3izO4fMUUccBxSCoY.png",
-    "createdAtUtc": "2021-07-10T21:32:20.3426823",
+    "createdAtUtc": "2021-07-11T00:09:10.2586658",
     "authType": "OAuth2",
     "customAuthInputKeys": null,
     "sorUrl": "https://coincap.io",
@@ -15,25 +15,25 @@
     "oAuthTokenPath": "/",
     "authenticated": false,
     "isRegistered": false,
-    "lastModifiedAtUtc": "2021-07-10T21:32:20.3426823",
+    "lastModifiedAtUtc": "2021-07-11T00:09:10.2586658",
     "categories": [],
     "endpoints": [],
     "_links": [
       {
         "rel": "https://identifiers-api.cloud.com/integration-service/authenticate",
-        "href": "/integrations/5896be62-52f5-4e58-923a-892d5e264412/authenticate",
+        "href": "/integrations/816071c4-40a6-4c17-ad93-aed8ddeeeba4/authenticate",
         "method": "Post",
         "payload": null
       },
       {
         "rel": "https://identifiers-api.cloud.com/common/details",
-        "href": "/integrations/5896be62-52f5-4e58-923a-892d5e264412",
+        "href": "/integrations/816071c4-40a6-4c17-ad93-aed8ddeeeba4",
         "method": "Get",
         "payload": null
       },
       {
         "rel": "https://identifiers-api.cloud.com/integration-service/create_registration",
-        "href": "/integrations/5896be62-52f5-4e58-923a-892d5e264412/registrations",
+        "href": "/integrations/816071c4-40a6-4c17-ad93-aed8ddeeeba4/registrations",
         "method": "Post",
         "payload": {
           "authConfig": {
@@ -51,13 +51,13 @@
       },
       {
         "rel": "https://identifiers-api.cloud.com/integration-service/get_scripts",
-        "href": "/integrations/5896be62-52f5-4e58-923a-892d5e264412/scripts",
+        "href": "/integrations/816071c4-40a6-4c17-ad93-aed8ddeeeba4/scripts",
         "method": "Get",
         "payload": null
       },
       {
         "rel": "https://identifiers-api.cloud.com/common/replace",
-        "href": "/integrations/5896be62-52f5-4e58-923a-892d5e264412",
+        "href": "/integrations/816071c4-40a6-4c17-ad93-aed8ddeeeba4",
         "method": "Put",
         "payload": {
           "vendor": "",
@@ -75,7 +75,7 @@
       },
       {
         "rel": "https://identifiers-api.cloud.com/integration-service/create_endpoint",
-        "href": "/integrations/5896be62-52f5-4e58-923a-892d5e264412/endpoints",
+        "href": "/integrations/816071c4-40a6-4c17-ad93-aed8ddeeeba4/endpoints",
         "method": "Post",
         "payload": {
           "name": "",
@@ -93,41 +93,59 @@
       },
       {
         "rel": "https://identifiers-api.cloud.com/integration-service/create_script",
-        "href": "/integrations/5896be62-52f5-4e58-923a-892d5e264412/scripts?name=script-name&language=Js",
+        "href": "/integrations/816071c4-40a6-4c17-ad93-aed8ddeeeba4/scripts?name=script-name&language=Js",
         "method": "Post",
         "payload": "script-code"
       },
       {
         "rel": "https://identifiers-api.cloud.com/common/delete",
-        "href": "/integrations/5896be62-52f5-4e58-923a-892d5e264412",
+        "href": "/integrations/816071c4-40a6-4c17-ad93-aed8ddeeeba4",
         "method": "Delete",
         "payload": null
       }
     ],
-    "id": "5896be62-52f5-4e58-923a-892d5e264412"
+    "id": "816071c4-40a6-4c17-ad93-aed8ddeeeba4"
   },
-  "scripts": {
-    "id": "1c77f393-c6ce-420b-a719-4cf61b09791b",
-    "name": "hello-world",
-    "code": "redacted",
-    "language": "Js",
-    "createdAtUtc": "2021-07-10T21:32:20.4163939+00:00",
-    "lastModifiedAtUtc": "2021-07-10T21:32:20.4163939+00:00",
-    "_links": [
-      {
-        "rel": "https://identifiers-api.cloud.com/common/replace",
-        "href": "/integrations/5896be62-52f5-4e58-923a-892d5e264412/scripts/1c77f393-c6ce-420b-a719-4cf61b09791b?name=hello-world&language=Js",
-        "method": "Put",
-        "payload": "script-code"
-      },
-      {
-        "rel": "https://identifiers-api.cloud.com/common/delete",
-        "href": "/integrations/5896be62-52f5-4e58-923a-892d5e264412/scripts/1c77f393-c6ce-420b-a719-4cf61b09791b",
-        "method": "Delete",
-        "payload": null
-      }
-    ]
-  },
+  "scripts": [
+    {
+      "id": "99deff5e-1afc-4253-8a80-e17a41bd860c",
+      "name": "hello-world",
+      "code": "redacted",
+      "language": "Js",
+      "createdAtUtc": "2021-07-11T00:09:11.3778343+00:00",
+      "lastModifiedAtUtc": "2021-07-11T00:09:11.3778343+00:00",
+      "_links": [
+        {
+          "rel": "https://identifiers-api.cloud.com/common/replace",
+          "href": "/integrations/816071c4-40a6-4c17-ad93-aed8ddeeeba4/scripts/99deff5e-1afc-4253-8a80-e17a41bd860c?name=hello-world&language=Js",
+          "method": "Put",
+          "payload": "script-code"
+        },
+        {
+          "rel": "https://identifiers-api.cloud.com/common/delete",
+          "href": "/integrations/816071c4-40a6-4c17-ad93-aed8ddeeeba4/scripts/99deff5e-1afc-4253-8a80-e17a41bd860c",
+          "method": "Delete",
+          "payload": null
+        }
+      ]
+    }
+  ],
+  "endpointDefinitions": [
+    {
+      "name": "hello-world",
+      "httpMethod": "Post",
+      "endpointType": "onDemand",
+      "category": "demo",
+      "endpointScripts": [
+        {
+          "scriptName": "hello-world",
+          "functionName": "helloWorld",
+          "endpointScriptType": "onExecution",
+          "demoPayload": "{\"query\": \"value ccc\"}"
+        }
+      ]
+    }
+  ],
   "endpoints": [
     {
       "name": "hello-world",
@@ -136,8 +154,8 @@
       "category": "demo",
       "endpointScripts": [
         {
-          "endpointId": "09a09150-2299-41f1-90b1-fac62ec4fa99",
-          "scriptId": "1c77f393-c6ce-420b-a719-4cf61b09791b",
+          "endpointId": "90348ff0-3e63-4531-b07b-86f45ecabf9d",
+          "scriptId": "99deff5e-1afc-4253-8a80-e17a41bd860c",
           "functionName": "helloWorld",
           "endpointScriptType": "OnExecution"
         }
@@ -145,7 +163,7 @@
       "_links": [
         {
           "rel": "https://identifiers-api.cloud.com/common/replace",
-          "href": "/integrations/5896be62-52f5-4e58-923a-892d5e264412/endpoints/09a09150-2299-41f1-90b1-fac62ec4fa99",
+          "href": "/integrations/816071c4-40a6-4c17-ad93-aed8ddeeeba4/endpoints/90348ff0-3e63-4531-b07b-86f45ecabf9d",
           "method": "Put",
           "payload": {
             "name": "",
@@ -163,7 +181,7 @@
         },
         {
           "rel": "https://identifiers-api.cloud.com/common/delete",
-          "href": "/integrations/5896be62-52f5-4e58-923a-892d5e264412/endpoints/09a09150-2299-41f1-90b1-fac62ec4fa99",
+          "href": "/integrations/816071c4-40a6-4c17-ad93-aed8ddeeeba4/endpoints/90348ff0-3e63-4531-b07b-86f45ecabf9d",
           "method": "Delete",
           "payload": null
         }
@@ -177,7 +195,8 @@
       "clientId": "{{sorClientId}}",
       "clientSecret": "{{sorClientSecret}}",
       "scopes": [
-        "https://graph.microsoft.com/Files.ReadWrite"
+        "Files.Read.All",
+        "offline_access"
       ],
       "loginParams": {},
       "baseUrl": null
@@ -188,13 +207,13 @@
     "_links": [
       {
         "rel": "https://identifiers-api.cloud.com/common/details",
-        "href": "/integrations/5896be62-52f5-4e58-923a-892d5e264412/registrations/92d392ff-2dc5-4c77-b28d-0e691a9c9df5",
+        "href": "/integrations/816071c4-40a6-4c17-ad93-aed8ddeeeba4/registrations/563c56e7-155f-4c88-87d1-0637ee6301ad",
         "method": "Get",
         "payload": null
       },
       {
         "rel": "https://identifiers-api.cloud.com/common/replace",
-        "href": "/integrations/5896be62-52f5-4e58-923a-892d5e264412/registrations/92d392ff-2dc5-4c77-b28d-0e691a9c9df5",
+        "href": "/integrations/816071c4-40a6-4c17-ad93-aed8ddeeeba4/registrations/563c56e7-155f-4c88-87d1-0637ee6301ad",
         "method": "Put",
         "payload": {
           "authConfig": {
@@ -203,7 +222,8 @@
             "clientId": "",
             "clientSecret": "",
             "scopes": [
-              "https://graph.microsoft.com/Files.ReadWrite"
+              "Files.Read.All",
+              "offline_access"
             ],
             "loginParams": {},
             "baseUrl": null
@@ -213,6 +233,6 @@
         }
       }
     ],
-    "id": "92d392ff-2dc5-4c77-b28d-0e691a9c9df5"
+    "id": "563c56e7-155f-4c88-87d1-0637ee6301ad"
   }
 }

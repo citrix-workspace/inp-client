@@ -7,6 +7,7 @@ import {createEndpoints, createIntegration, createRegistration, uploadJavascript
 import {BUNDLE_DIR} from "./config";
 import {Buffer} from 'buffer'
 import path from "path";
+import {EndpointScript, EndpointsDefinition, EndpointsDefinitions} from "./types";
 
 program
     .option('-p, --param [parameters...]', 'parameters')
@@ -22,44 +23,57 @@ async function main(args: OptionValues) {
     console.log(`main(${JSON.stringify(args)})`)
     return createIntegration(loadResource('integration.json'))
         .then(async integration => {
-            // FIXME hardcoded script name
-            // FIXME process all scripts from endpoints.json
-            const scriptName = 'hello-world'
-            const script = loadResource(path.join('scripts', `${scriptName}.js`))
-            const scriptResource = await uploadJavascript(integration.id, scriptName, script)
-            return ({integration, scripts: scriptResource})
+            const endpointDefinitions: EndpointsDefinitions = JSON.parse(loadResource('endpoints.json'))
+            const scriptResources = await Promise.all(endpointDefinitions.map(endpoint => createScriptsForEndpoint(integration.id, endpoint)).flat())
+            return ({integration, scripts: scriptResources,  endpointDefinitions})
         })
-        .then(async integration => {
-            const endpoints = JSON.parse(loadResource('endpoints.json'))
-            const endpointsResource = await Promise.all(endpoints.map((endpoint: any) => {
+        .then(async result => {
+            const endpoints = await Promise.all(result.endpointDefinitions.map((endpoint) => {
                 const {name, httpMethod, endpointType, category, endpointScripts} = endpoint
                 const endpointScriptRequest = {
                     name,
                     httpMethod,
                     endpointType,
                     category,
-                    endpointScriptRequests: endpointScripts.map(({functionName, endpointScriptType}: any) => ({
-                        // FIXME hardcoded scriptId, map scriptId to script name from endpoints.json
-                        scriptId: integration.scripts.id,
+                    endpointScriptRequests: endpointScripts.map(({functionName, endpointScriptType, scriptName}) => ({
+                        scriptId: findScriptId(result.scripts,  scriptName),
                         functionName,
                         endpointScriptType,
                     })),
                 }
-                return createEndpoints(integration.integration.id, JSON.stringify(endpointScriptRequest))
+                return createEndpoints(result.integration.id, JSON.stringify(endpointScriptRequest))
             }))
-            return ({...integration, endpoints: endpointsResource})
+            return ({...result, endpoints})
         })
         .then(async integration => {
             const registrationPayload = loadResource('registration.json')
             const registrationResource = await createRegistration(integration.integration.id, registrationPayload)
             return ({...integration, registration: registrationResource})
         })
-        .then(integration => {
-            saveResource('created-integration.json', formatJson(integration))
-            return integration
+        .then(result => {
+            saveResource('created-integration.json', formatJson(result))
+            console.log(`Integration id=${result.integration.id} created`)
+            return result
         })
-        .then((integration) => console.log(`Integration created: ${formatJson(integration)}`))
-        .catch(error => console.error(`Create Integration failed: ${error}`))
+        .catch(error => console.error(`Create Integration failed: ${error} ${error.stack}`))
+}
+
+function createScriptsForEndpoint(integrationId: string, endpoint: EndpointsDefinition): Promise<any>[] {
+    return endpoint.endpointScripts.map(endpointScript => createEndpointScript(integrationId, endpointScript))
+}
+
+function createEndpointScript(integrationId: string, {scriptName}: EndpointScript): Promise<any> {
+    const scriptFileName = scriptName.toLocaleLowerCase().endsWith('.js') ? scriptName : `${scriptName}.js`
+    const script = loadResource(path.join('scripts', scriptFileName))
+    return uploadJavascript(integrationId, scriptName, script)
+}
+
+function findScriptId(scripts: any[], scriptName: string): string {
+   const scriptResource = scripts.find(({name}) => name === scriptName)
+   if (scriptResource === undefined) {
+       throw new Error(`Script not found by name = ${scriptName}, available names = ${scripts.map(({name})=> name)}`)
+   }
+   return scriptResource.id
 }
 
 function formatJson(object: any): string {
