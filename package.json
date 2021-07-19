@@ -1,14 +1,13 @@
 {
   "name": "inp-client",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Client to communicate with Integration platform",
   "main": "./dist/src/inp-client.js",
   "bin": {
     "inp-client": "./dist/src/inp-client.js"
   },
   "scripts": {
-    "build": "tsc",
-    "prepublish": "npm run build",
+    "prepare": "tsc",
     "inp-client": "node ./dist/src/inp-client.js",
     "create-integration": "inp-client -- -p action=create-integration",
     "update-integration": "inp-client -- -p action=update-integration",

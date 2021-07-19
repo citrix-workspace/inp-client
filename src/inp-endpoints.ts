@@ -1,6 +1,6 @@
 import 'isomorphic-fetch'
 import qs from 'qs'
-import {getSuccessJson, getSuccessText} from "./lib/validation";
+import {getSuccessJson} from "./lib/validation";
 import {INP_BASE_URL, CUSTOMER_ID, USER_ID} from "./config";
 import {Dictionary} from "./types";
 
@@ -57,7 +57,6 @@ export async function uploadJavascript(integrationId: string, scriptName: string
 
 export async function createEndpoints(integrationId: string, endpointsPayload: string) {
     const url = `${INP_BASE_URL}/integrations/${integrationId}/endpoints`
-    // console.log(`createEndpoints url=${url}, payload=${endpointsPayload}`)
     const options: RequestInit = {
         ...defaultPostOptions,
         body: endpointsPayload,
@@ -76,6 +75,18 @@ export async function createRegistration(integrationId: string, registrationPayl
     return fetch(url, options)
         .then(getSuccessJson(new Error(`Create registration for integrationId=${integrationId} failed`)))
     .then(fillResourceId('registrations'))
+}
+
+export function updateScript(id: string, href: string, source: string): Promise<any> {
+    const url = `${INP_BASE_URL}${href}`
+    const options: RequestInit = {
+        ...defaultPostOptions,
+        headers: {...defaultPostOptions.headers, 'Content-Type': 'text/plain'},
+        method: 'PUT',
+        body: source,
+    }
+    return fetch(url, options)
+        .then(getSuccessJson(new Error(`Update scriptId=${id} failed.`)))
 }
 
 function getResourceId(object: any, name: string): string {

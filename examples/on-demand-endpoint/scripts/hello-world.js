@@ -5,7 +5,7 @@ function helloWorld({ parameters }) {
 	const requestBody = base64Encoder.atob(parameters.requestBody)
 	const requestObject = JSON.parse(requestBody)
 	console.log(`Got requestBody=${requestBody}`)
-	return new HttpResponse(200, [{ name: 'Content-Type', value: 'application/json' }], JSON.stringify({ result: `hello world result v2 query=${requestObject.query}` }));
+	return new HttpResponse(200, [{ name: 'Content-Type', value: 'application/json' }], JSON.stringify({ result: `hello world result query=${requestObject.query}` }));
 }
 
 class HttpResponse {

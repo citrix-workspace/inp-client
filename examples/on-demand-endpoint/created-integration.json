@@ -4,7 +4,7 @@
     "title": "Test Integration",
     "description": "Test integration",
     "iconUrl": "https://iws-prod-global-customicons-cdn-endpoint.azureedge.net/image/7TwzpadhUzR27KW3izO4fMUUccBxSCoY.png",
-    "createdAtUtc": "2021-07-11T00:09:10.2586658",
+    "createdAtUtc": "2021-07-19T23:08:43.6475397",
     "authType": "OAuth2",
     "customAuthInputKeys": null,
     "sorUrl": "https://coincap.io",
@@ -15,25 +15,25 @@
     "oAuthTokenPath": "/",
     "authenticated": false,
     "isRegistered": false,
-    "lastModifiedAtUtc": "2021-07-11T00:09:10.2586658",
+    "lastModifiedAtUtc": "2021-07-19T23:08:43.6475397",
     "categories": [],
     "endpoints": [],
     "_links": [
       {
         "rel": "https://identifiers-api.cloud.com/integration-service/authenticate",
-        "href": "/integrations/816071c4-40a6-4c17-ad93-aed8ddeeeba4/authenticate",
+        "href": "/integrations/2998f2c7-fdce-4236-8eca-bba6f9dd792f/authenticate",
         "method": "Post",
         "payload": null
       },
       {
         "rel": "https://identifiers-api.cloud.com/common/details",
-        "href": "/integrations/816071c4-40a6-4c17-ad93-aed8ddeeeba4",
+        "href": "/integrations/2998f2c7-fdce-4236-8eca-bba6f9dd792f",
         "method": "Get",
         "payload": null
       },
       {
         "rel": "https://identifiers-api.cloud.com/integration-service/create_registration",
-        "href": "/integrations/816071c4-40a6-4c17-ad93-aed8ddeeeba4/registrations",
+        "href": "/integrations/2998f2c7-fdce-4236-8eca-bba6f9dd792f/registrations",
         "method": "Post",
         "payload": {
           "authConfig": {
@@ -51,13 +51,13 @@
       },
       {
         "rel": "https://identifiers-api.cloud.com/integration-service/get_scripts",
-        "href": "/integrations/816071c4-40a6-4c17-ad93-aed8ddeeeba4/scripts",
+        "href": "/integrations/2998f2c7-fdce-4236-8eca-bba6f9dd792f/scripts",
         "method": "Get",
         "payload": null
       },
       {
         "rel": "https://identifiers-api.cloud.com/common/replace",
-        "href": "/integrations/816071c4-40a6-4c17-ad93-aed8ddeeeba4",
+        "href": "/integrations/2998f2c7-fdce-4236-8eca-bba6f9dd792f",
         "method": "Put",
         "payload": {
           "vendor": "",
@@ -75,7 +75,7 @@
       },
       {
         "rel": "https://identifiers-api.cloud.com/integration-service/create_endpoint",
-        "href": "/integrations/816071c4-40a6-4c17-ad93-aed8ddeeeba4/endpoints",
+        "href": "/integrations/2998f2c7-fdce-4236-8eca-bba6f9dd792f/endpoints",
         "method": "Post",
         "payload": {
           "name": "",
@@ -93,37 +93,37 @@
       },
       {
         "rel": "https://identifiers-api.cloud.com/integration-service/create_script",
-        "href": "/integrations/816071c4-40a6-4c17-ad93-aed8ddeeeba4/scripts?name=script-name&language=Js",
+        "href": "/integrations/2998f2c7-fdce-4236-8eca-bba6f9dd792f/scripts?name=script-name&language=Js",
         "method": "Post",
         "payload": "script-code"
       },
       {
         "rel": "https://identifiers-api.cloud.com/common/delete",
-        "href": "/integrations/816071c4-40a6-4c17-ad93-aed8ddeeeba4",
+        "href": "/integrations/2998f2c7-fdce-4236-8eca-bba6f9dd792f",
         "method": "Delete",
         "payload": null
       }
     ],
-    "id": "816071c4-40a6-4c17-ad93-aed8ddeeeba4"
+    "id": "2998f2c7-fdce-4236-8eca-bba6f9dd792f"
   },
   "scripts": [
     {
-      "id": "99deff5e-1afc-4253-8a80-e17a41bd860c",
+      "id": "7a8804f4-fd74-4436-9132-c91d8cd8c701",
       "name": "hello-world",
       "code": "redacted",
       "language": "Js",
-      "createdAtUtc": "2021-07-11T00:09:11.3778343+00:00",
-      "lastModifiedAtUtc": "2021-07-11T00:09:11.3778343+00:00",
+      "createdAtUtc": "2021-07-19T23:08:43.7248965+00:00",
+      "lastModifiedAtUtc": "2021-07-19T23:08:43.7248965+00:00",
       "_links": [
         {
           "rel": "https://identifiers-api.cloud.com/common/replace",
-          "href": "/integrations/816071c4-40a6-4c17-ad93-aed8ddeeeba4/scripts/99deff5e-1afc-4253-8a80-e17a41bd860c?name=hello-world&language=Js",
+          "href": "/integrations/2998f2c7-fdce-4236-8eca-bba6f9dd792f/scripts/7a8804f4-fd74-4436-9132-c91d8cd8c701?name=hello-world&language=Js",
           "method": "Put",
           "payload": "script-code"
         },
         {
           "rel": "https://identifiers-api.cloud.com/common/delete",
-          "href": "/integrations/816071c4-40a6-4c17-ad93-aed8ddeeeba4/scripts/99deff5e-1afc-4253-8a80-e17a41bd860c",
+          "href": "/integrations/2998f2c7-fdce-4236-8eca-bba6f9dd792f/scripts/7a8804f4-fd74-4436-9132-c91d8cd8c701",
           "method": "Delete",
           "payload": null
         }
@@ -154,8 +154,8 @@
       "category": "demo",
       "endpointScripts": [
         {
-          "endpointId": "90348ff0-3e63-4531-b07b-86f45ecabf9d",
-          "scriptId": "99deff5e-1afc-4253-8a80-e17a41bd860c",
+          "endpointId": "6f1583a5-bcab-479f-bf26-512dc461f84f",
+          "scriptId": "7a8804f4-fd74-4436-9132-c91d8cd8c701",
           "functionName": "helloWorld",
           "endpointScriptType": "OnExecution"
         }
@@ -163,7 +163,7 @@
       "_links": [
         {
           "rel": "https://identifiers-api.cloud.com/common/replace",
-          "href": "/integrations/816071c4-40a6-4c17-ad93-aed8ddeeeba4/endpoints/90348ff0-3e63-4531-b07b-86f45ecabf9d",
+          "href": "/integrations/2998f2c7-fdce-4236-8eca-bba6f9dd792f/endpoints/6f1583a5-bcab-479f-bf26-512dc461f84f",
           "method": "Put",
           "payload": {
             "name": "",
@@ -181,7 +181,7 @@
         },
         {
           "rel": "https://identifiers-api.cloud.com/common/delete",
-          "href": "/integrations/816071c4-40a6-4c17-ad93-aed8ddeeeba4/endpoints/90348ff0-3e63-4531-b07b-86f45ecabf9d",
+          "href": "/integrations/2998f2c7-fdce-4236-8eca-bba6f9dd792f/endpoints/6f1583a5-bcab-479f-bf26-512dc461f84f",
           "method": "Delete",
           "payload": null
         }
@@ -207,13 +207,13 @@
     "_links": [
       {
         "rel": "https://identifiers-api.cloud.com/common/details",
-        "href": "/integrations/816071c4-40a6-4c17-ad93-aed8ddeeeba4/registrations/563c56e7-155f-4c88-87d1-0637ee6301ad",
+        "href": "/integrations/2998f2c7-fdce-4236-8eca-bba6f9dd792f/registrations/95b5df1e-f81f-4af4-9014-485f7505fad2",
         "method": "Get",
         "payload": null
       },
       {
         "rel": "https://identifiers-api.cloud.com/common/replace",
-        "href": "/integrations/816071c4-40a6-4c17-ad93-aed8ddeeeba4/registrations/563c56e7-155f-4c88-87d1-0637ee6301ad",
+        "href": "/integrations/2998f2c7-fdce-4236-8eca-bba6f9dd792f/registrations/95b5df1e-f81f-4af4-9014-485f7505fad2",
         "method": "Put",
         "payload": {
           "authConfig": {
@@ -233,6 +233,6 @@
         }
       }
     ],
-    "id": "563c56e7-155f-4c88-87d1-0637ee6301ad"
+    "id": "95b5df1e-f81f-4af4-9014-485f7505fad2"
   }
 }
