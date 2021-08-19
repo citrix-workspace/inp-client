@@ -1,8 +1,11 @@
-﻿
-{
+﻿{
   "vendor": "Citrix Systems, Inc.",
-  "title": "Test Integration",
-  "description": "Test integration",
+  "titles": {
+    "en": "Test Integration"
+  },
+  "descriptions": {
+    "en": "Test integration"
+  },
   "iconUrl": "https://iws-prod-global-customicons-cdn-endpoint.azureedge.net/image/7TwzpadhUzR27KW3izO4fMUUccBxSCoY.png",
   "authType": "OAuth2",
   "customAuthInputKeys": null,
@@ -10,5 +13,6 @@
   "sor": "Hello World",
   "requiredScopes": [
   ],
+  "enablementMode": "AutoWithAdminOverride",
   "version": "1.0"
 }

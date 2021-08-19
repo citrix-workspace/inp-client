@@ -1,41 +1,55 @@
 import 'isomorphic-fetch'
 import qs from 'qs'
 import {getSuccessJson} from "./lib/validation";
-import {INP_BASE_URL, CUSTOMER_ID, USER_ID} from "./config";
+import {getAuthToken, getBaseUrl, getCustomerId, getUserId} from "./config";
 import {Dictionary} from "./types";
 
 const contentTypeJsonHeader: Dictionary = {'Content-Type': 'application/json'}
 
-const defaultPostOptions: RequestInit = {
-    method: 'POST',
-    headers: {
-        ...contentTypeJsonHeader,
-        ...customerIdHeader(CUSTOMER_ID),
-        ...userIdHeader(USER_ID),
-        ...isAdminHeader(true)
-    },
+function getDefaultPostOptions(authToken?: string): RequestInit {
+    return ({
+        method: 'POST',
+        headers: {
+            ...contentTypeJsonHeader,
+            ...customerIdHeader(getCustomerId()),
+            ...userIdHeader(getUserId()),
+            ...isAdminHeader(!authToken),
+            ...bearerAuthHeader(getAuthToken()),
+        },
+    })
 }
 
 function isAdminHeader(isAdmin: boolean): Dictionary {
-    return {IsAdmin: isAdmin}
+    return isAdmin
+        ? ({IsAdmin: isAdmin})
+        : ({})
 }
 
 function customerIdHeader(customerId: string): Dictionary {
     return ({'Citrix-CustomerId': customerId})
 }
 
-function userIdHeader(userId: string): Dictionary {
-    return ({'Citrix-UserId': userId})
+function userIdHeader(userId?: string): Dictionary {
+    return userId
+        ? ({'Citrix-UserId': userId})
+        : ({})
+}
+
+function bearerAuthHeader(token?: string): Dictionary {
+    return token
+        ? ({Authorization: `CWSAuth bearer=${token}`})
+        : ({})
 }
 
 export function createIntegration(integrationPayload: string) {
-    const url = `${INP_BASE_URL}/integrations`
+    const url = `${getBaseUrl()}/integrations`
+    const defaultOptions = getDefaultPostOptions(getAuthToken())
     const options: RequestInit = {
-        ...defaultPostOptions,
+        ...defaultOptions,
         body: integrationPayload,
     }
     return fetch(url, options)
-        .then(getSuccessJson(new Error(`Create integration failed`)))
+        .then(getSuccessJson(async response =>  new Error(`Create integration failed: ${await response.text()}`)))
         .then(fillResourceId('integrations'))
 }
 
@@ -44,8 +58,9 @@ export async function uploadJavascript(integrationId: string, scriptName: string
         name: scriptName,
         language: 'js'
     }
-    const url = `${INP_BASE_URL}/integrations/${integrationId}/scripts?${qs.stringify(parameters)}`
+    const url = `${getBaseUrl()}/integrations/${integrationId}/scripts?${qs.stringify(parameters)}`
     console.log(`uploadJavascript ${scriptName} url=${url}`)
+    const defaultPostOptions = getDefaultPostOptions(getAuthToken())
     const options: RequestInit = {
         ...defaultPostOptions,
         headers: {...defaultPostOptions.headers, 'Content-Type': 'text/plain'},
@@ -56,9 +71,10 @@ export async function uploadJavascript(integrationId: string, scriptName: string
 }
 
 export async function createEndpoints(integrationId: string, endpointsPayload: string) {
-    const url = `${INP_BASE_URL}/integrations/${integrationId}/endpoints`
+    console.log(`Creating endpoint ${JSON.parse(endpointsPayload).name}`)
+    const url = `${getBaseUrl()}/integrations/${integrationId}/endpoints`
     const options: RequestInit = {
-        ...defaultPostOptions,
+        ...getDefaultPostOptions(getAuthToken()),
         body: endpointsPayload,
     }
     return fetch(url, options)
@@ -66,10 +82,10 @@ export async function createEndpoints(integrationId: string, endpointsPayload: s
 }
 
 export async function createRegistration(integrationId: string, registrationPayload: string) {
-    const url = `${INP_BASE_URL}/integrations/${integrationId}/registrations`
+    const url = `${getBaseUrl()}/integrations/${integrationId}/registrations`
     // console.log(`createRegistration url=${url}, payload=${registrationPayload}`)
     const options: RequestInit = {
-        ...defaultPostOptions,
+        ...getDefaultPostOptions(getAuthToken()),
         body: registrationPayload,
     }
     return fetch(url, options)
@@ -77,14 +93,29 @@ export async function createRegistration(integrationId: string, registrationPayl
     .then(fillResourceId('registrations'))
 }
 
+export async function createAuthConfig(integrationId: string, authConfigPayload: string) {
+    const url = `${getBaseUrl()}/integrations/${integrationId}/authConfigurations`
+    const options: RequestInit = {
+        ...getDefaultPostOptions(getAuthToken()),
+        body: authConfigPayload,
+    }
+    return fetch(url, options)
+        .then(getSuccessJson(new Error(`Create auth configuration for integrationId=${integrationId} failed`)))
+}
+
 export function updateScript(id: string, href: string, source: string): Promise<any> {
-    const url = `${INP_BASE_URL}${href}`
+    // hack to make URL from links when integration service is used as base URL instead of gateway API URL - strip leading /integrationservice
+    const url = getBaseUrl().includes('integration-service')
+        ? `${getBaseUrl()}${href.replace('/integrationservice', '')}`
+        : `${getBaseUrl()}${href}`
+    const defaultPostOptions = getDefaultPostOptions()
     const options: RequestInit = {
         ...defaultPostOptions,
         headers: {...defaultPostOptions.headers, 'Content-Type': 'text/plain'},
         method: 'PUT',
         body: source,
     }
+    console.log(`updateScript id=${id} at url=${url}`)
     return fetch(url, options)
         .then(getSuccessJson(new Error(`Update scriptId=${id} failed.`)))
 }

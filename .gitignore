@@ -3,7 +3,7 @@
 *.iml
 
 # Secrets
-.env
+local/on-demand-endpoint/.env
 
 # Logs
 logs
@@ -76,7 +76,7 @@ typings/
 .yarn-integrity
 
 # dotenv environment variables file
-.env
+local/on-demand-endpoint/.env
 .env.test
 
 # parcel-bundler cache (https://parceljs.org/)

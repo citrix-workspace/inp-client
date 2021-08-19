@@ -1,6 +1,6 @@
 {
   "name": "inp-client",
-  "version": "1.1.0",
+  "version": "1.3.1",
   "description": "Client to communicate with Integration platform",
   "main": "./dist/src/inp-client.js",
   "bin": {
@@ -9,8 +9,6 @@
   "scripts": {
     "prepare": "tsc",
     "inp-client": "node ./dist/src/inp-client.js",
-    "create-integration": "inp-client -- -p action=create-integration",
-    "update-integration": "inp-client -- -p action=update-integration",
     "test": "cross-env NODE_ENV=test  mocha 'test/**.spec.js' 'test/**.spec.ts' 'src/**/*.spec.ts*' 'src/**/*.spec.js*' -r ts-node/register -r test/mochaSetup.ts --recursive"
   },
   "repository": {
@@ -29,14 +27,10 @@
     "@types/mocha": "^8.2.1",
     "@types/node": "^14.14.28",
     "@types/qs": "^6.9.7",
-    "abab": "^2.0.5",
     "babel-loader": "^8.1.0",
     "babel-plugin-module-resolver": "^4.1.0",
     "chai": "^4.3.0",
-    "cross-env": "^7.0.3",
     "deep-equal-in-any-order": "^1.0.28",
-    "dotenv": "^8.6.0",
-    "isomorphic-fetch": "^3.0.0",
     "mocha": "^8.3.0",
     "source-map-loader": "^1.1.0",
     "ts-loader": "^8.0.4",
@@ -48,8 +42,12 @@
     "webpack-cli": "^3.3.12"
   },
   "dependencies": {
+    "abab": "^2.0.5",
     "chalk": "^4.1.1",
     "commander": "^8.0.0",
+    "cross-env": "^7.0.3",
+    "dotenv": "^8.6.0",
+    "isomorphic-fetch": "^3.0.0",
     "lodash": "^4.17.21",
     "qs": "^6.10.1"
   }
