@@ -261,7 +261,12 @@ function postResultsMain(bundleFolder: string, payloadFileName?: string): Promis
     return inpEndpoints.postResults(integrationId, endpointId, payload)
         .then(result => {
             console.log('Results:')
-            logAsJson(result)
+            try {
+                logAsJson(result)
+            } catch (e) {
+                console.log(result)
+            }
+            return result
         })
 }
 
