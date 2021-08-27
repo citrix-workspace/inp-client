@@ -1,0 +1,276 @@
+{
+  "integration": {
+    "id": "c4c62778-2c1c-4438-9319-bef67e212435",
+    "vendor": "Citrix Systems, Inc.",
+    "iconUrl": "https://iws-prod-global-customicons-cdn-endpoint.azureedge.net/image/7TwzpadhUzR27KW3izO4fMUUccBxSCoY.png",
+    "createdAtUtc": "2021-08-27T04:11:34.3615383",
+    "authType": "OAuth2",
+    "customAuthInputKeys": null,
+    "sorUrl": "https://coincap.io",
+    "sor": "Hello World",
+    "requiredScopes": [],
+    "version": "1.0",
+    "enabled": false,
+    "oAuthTokenPath": "/",
+    "enablementMode": "AutoWithAdminOverride",
+    "authenticated": false,
+    "isRegistered": false,
+    "lastModifiedAtUtc": "2021-08-27T04:11:34.3615383",
+    "categories": [],
+    "titles": {
+      "en": "Test Integration"
+    },
+    "descriptions": {
+      "en": "Test integration"
+    },
+    "endpoints": [],
+    "title": "Test Integration",
+    "description": "Test integration",
+    "_links": [
+      {
+        "rel": "https://identifiers-api.cloud.com/integration-service/authenticate",
+        "href": "/integrations/c4c62778-2c1c-4438-9319-bef67e212435/authenticate",
+        "method": "Post",
+        "payload": null
+      },
+      {
+        "rel": "https://identifiers-api.cloud.com/integration-service/create_authSession",
+        "href": "/integrations/c4c62778-2c1c-4438-9319-bef67e212435/authentications",
+        "method": "Post",
+        "payload": null
+      },
+      {
+        "rel": "https://identifiers-api.cloud.com/common/details",
+        "href": "/integrations/c4c62778-2c1c-4438-9319-bef67e212435",
+        "method": "Get",
+        "payload": null
+      },
+      {
+        "rel": "https://identifiers-api.cloud.com/integration-service/create_registration",
+        "href": "/integrations/c4c62778-2c1c-4438-9319-bef67e212435/registrations",
+        "method": "Post",
+        "payload": {
+          "authConfig": {
+            "loginUrl": "about:blank",
+            "tokenUrl": "about:blank",
+            "clientId": "",
+            "clientSecret": "",
+            "scopes": [],
+            "loginParams": null,
+            "baseUrl": null
+          },
+          "enabled": true,
+          "blockedUsers": []
+        }
+      },
+      {
+        "rel": "https://identifiers-api.cloud.com/integration-service/get_scripts",
+        "href": "/integrations/c4c62778-2c1c-4438-9319-bef67e212435/scripts",
+        "method": "Get",
+        "payload": null
+      },
+      {
+        "rel": "https://identifiers-api.cloud.com/common/replace",
+        "href": "/integrations/c4c62778-2c1c-4438-9319-bef67e212435",
+        "method": "Put",
+        "payload": {
+          "vendor": "",
+          "titles": {},
+          "descriptions": {},
+          "iconUrl": "about:blank",
+          "authType": "OAuth2",
+          "customAuthInputKeys": [],
+          "sorUrl": "about:blank",
+          "sor": "",
+          "requiredScopes": [],
+          "version": "",
+          "oAuthTokenPath": "",
+          "enablementMode": "AutoWithAdminOverride"
+        }
+      },
+      {
+        "rel": "https://identifiers-api.cloud.com/integration-service/create_endpoint",
+        "href": "/integrations/c4c62778-2c1c-4438-9319-bef67e212435/endpoints",
+        "method": "Post",
+        "payload": {
+          "name": "",
+          "httpMethod": "Post",
+          "endpointType": "OnDemand",
+          "category": "",
+          "endpointScriptRequests": [
+            {
+              "scriptId": "00000000-0000-0000-0000-000000000000",
+              "functionName": "",
+              "endpointScriptType": "OnExecution"
+            }
+          ]
+        }
+      },
+      {
+        "rel": "https://identifiers-api.cloud.com/integration-service/create_script",
+        "href": "/integrations/c4c62778-2c1c-4438-9319-bef67e212435/scripts?name=script-name&language=Js",
+        "method": "Post",
+        "payload": "script-code"
+      },
+      {
+        "rel": "https://identifiers-api.cloud.com/common/delete",
+        "href": "/integrations/c4c62778-2c1c-4438-9319-bef67e212435",
+        "method": "Delete",
+        "payload": null
+      },
+      {
+        "rel": "https://identifiers-api.cloud.com/integration-service/create_authConfiguration",
+        "href": "/integrations/c4c62778-2c1c-4438-9319-bef67e212435/authConfigurations",
+        "method": "Post",
+        "payload": {
+          "oAuthConfiguration": {
+            "loginUrl": "about:blank",
+            "tokenUrl": "about:blank",
+            "clientId": "",
+            "clientSecret": "",
+            "scopes": [],
+            "loginParams": null,
+            "baseUrl": null
+          },
+          "useForNewRegistration": true
+        }
+      },
+      {
+        "rel": "https://identifiers-api.cloud.com/integration-service/get_authConfigurations",
+        "href": "/integrations/c4c62778-2c1c-4438-9319-bef67e212435/authConfigurations",
+        "method": "Get",
+        "payload": null
+      }
+    ]
+  },
+  "scripts": [
+    {
+      "id": "9dc07dc6-6723-4cec-99c4-51509eb60cd6",
+      "name": "hello-world",
+      "code": "redacted",
+      "language": "Js",
+      "createdAtUtc": "2021-08-27T04:11:34.4062859+00:00",
+      "lastModifiedAtUtc": "2021-08-27T04:11:34.4062859+00:00",
+      "_links": [
+        {
+          "rel": "https://identifiers-api.cloud.com/common/replace",
+          "href": "/integrations/c4c62778-2c1c-4438-9319-bef67e212435/scripts/9dc07dc6-6723-4cec-99c4-51509eb60cd6?name=hello-world&language=Js",
+          "method": "Put",
+          "payload": "script-code"
+        },
+        {
+          "rel": "https://identifiers-api.cloud.com/common/delete",
+          "href": "/integrations/c4c62778-2c1c-4438-9319-bef67e212435/scripts/9dc07dc6-6723-4cec-99c4-51509eb60cd6",
+          "method": "Delete",
+          "payload": null
+        }
+      ]
+    }
+  ],
+  "endpointDefinitions": [
+    {
+      "name": "hello-world",
+      "httpMethod": "Post",
+      "endpointType": "onDemand",
+      "category": "demo",
+      "endpointScripts": [
+        {
+          "scriptName": "hello-world",
+          "functionName": "helloWorld",
+          "endpointScriptType": "onExecution",
+          "demoPayload": "{\"query\": \"value ccc\"}"
+        }
+      ]
+    }
+  ],
+  "endpoints": [
+    {
+      "id": "7b39eb0c-3b5d-4be8-97a2-d612b9beddec",
+      "name": "hello-world",
+      "httpMethod": "Post",
+      "endpointType": "OnDemand",
+      "category": "demo",
+      "endpointScripts": [
+        {
+          "endpointId": "7b39eb0c-3b5d-4be8-97a2-d612b9beddec",
+          "scriptId": "9dc07dc6-6723-4cec-99c4-51509eb60cd6",
+          "functionName": "helloWorld",
+          "endpointScriptType": "OnExecution"
+        }
+      ],
+      "_links": [
+        {
+          "rel": "https://identifiers-api.cloud.com/common/replace",
+          "href": "/integrations/c4c62778-2c1c-4438-9319-bef67e212435/endpoints/7b39eb0c-3b5d-4be8-97a2-d612b9beddec",
+          "method": "Put",
+          "payload": {
+            "name": "",
+            "httpMethod": "Post",
+            "endpointType": "OnDemand",
+            "category": "",
+            "endpointScriptRequests": [
+              {
+                "scriptId": "00000000-0000-0000-0000-000000000000",
+                "functionName": "",
+                "endpointScriptType": "OnExecution"
+              }
+            ]
+          }
+        },
+        {
+          "rel": "https://identifiers-api.cloud.com/common/delete",
+          "href": "/integrations/c4c62778-2c1c-4438-9319-bef67e212435/endpoints/7b39eb0c-3b5d-4be8-97a2-d612b9beddec",
+          "method": "Delete",
+          "payload": null
+        }
+      ]
+    }
+  ],
+  "registration": {
+    "id": "b6ab6a7b-3662-4ff5-bf7d-598dc1ec3fe9",
+    "authConfig": {
+      "loginUrl": "https://login.microsoftonline.com/common/oauth2/v2.0/authorize",
+      "tokenUrl": "https://login.microsoftonline.com/common/oauth2/v2.0/token",
+      "clientId": "{{sorClientId}}",
+      "clientSecret": "{{s**************}}",
+      "scopes": [
+        "Files.Read.All",
+        "offline_access"
+      ],
+      "loginParams": {},
+      "baseUrl": null
+    },
+    "customerId": "igp-dev",
+    "enabled": true,
+    "blockedUsers": [],
+    "_links": [
+      {
+        "rel": "https://identifiers-api.cloud.com/common/details",
+        "href": "/integrations/c4c62778-2c1c-4438-9319-bef67e212435/registrations/b6ab6a7b-3662-4ff5-bf7d-598dc1ec3fe9",
+        "method": "Get",
+        "payload": null
+      },
+      {
+        "rel": "https://identifiers-api.cloud.com/common/replace",
+        "href": "/integrations/c4c62778-2c1c-4438-9319-bef67e212435/registrations/b6ab6a7b-3662-4ff5-bf7d-598dc1ec3fe9",
+        "method": "Put",
+        "payload": {
+          "authConfig": {
+            "loginUrl": "about:blank",
+            "tokenUrl": "about:blank",
+            "clientId": "",
+            "clientSecret": "",
+            "scopes": [
+              "Files.Read.All",
+              "offline_access"
+            ],
+            "loginParams": {},
+            "baseUrl": null
+          },
+          "enabled": true,
+          "blockedUsers": []
+        }
+      }
+    ]
+  }
+}

@@ -18,10 +18,16 @@ const config: {
 
 export async function init(envFolder: string = '.', envName: string = '.env', withAuth: boolean = false) {
     const envPath = path.resolve(envFolder, envName)
-    const result = dotenv.config({path: envPath})
-    if (result.error) {
-        throw new Error(`Cannot parse env from path=${envPath}: ${result.error}`)
+    if (fs.existsSync(envPath)) {
+        const result = dotenv.config({path: envPath})
+        if (result.error) {
+            throw new Error(`Cannot parse env from path=${envPath}: ${result.error}`)
+        }
+        console.log(`env variables loaded from ${envPath}`)
+    } else {
+        console.log(`.env file ${envPath} resolved from ${envName} does not exists. Skipping processing env variables using ${envName}.`)
     }
+
     const {
         INP_BASE_URL,
         CUSTOMER_ID,

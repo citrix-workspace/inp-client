@@ -2,18 +2,57 @@ export type Dictionary = {
     [key: string]: any
 }
 
-export interface EndpointScript {
+/*
+ Integration bundle
+ */
+export interface EndpointScriptDefinition {
     scriptName: string,
     functionName: string,
-    endpointScriptType: "onExecution"
+    endpointScriptType: 'onExecution'
 }
 
 export interface EndpointsDefinition {
-            name: string,
-            httpMethod: "Post" | "Put" | "Get" | "Delete",
-            endpointType: "onDemand",
-            category: string,
-            endpointScripts: EndpointScript[]
+    name: string,
+    httpMethod: 'Post' | 'Put' | 'Get' | 'Delete',
+    endpointType: 'onDemand' | 'onSubscribe',
+    category: string,
+    endpointScripts: EndpointScriptDefinition[]
 }
 
-export type EndpointsDefinitions = EndpointsDefinition[]
+/* Integration resources */
+
+export interface EndpointScript {
+    endpointId: string,
+    scriptId: string,
+    functionName: string,
+    endpointScriptType: 'OnExecution'
+}
+
+export interface Endpoint {
+    id?: string,
+    name: string,
+    httpMethod: 'Post' | 'Put' | 'Get' | 'Delete',
+    endpointType: 'onDemand' | 'onSubscribe',
+    category: string,
+    endpointScripts: EndpointScript[]
+}
+
+export interface Script {
+    id: string,
+    name: string,
+}
+
+export interface IntegrationResource {
+    id: string,
+}
+
+export interface Registration {
+    id: string,
+}
+
+export interface SavedIntegration {
+    integration: IntegrationResource,
+    endpoints: Endpoint[],
+    scripts: Script[],
+    registration: Registration,
+}

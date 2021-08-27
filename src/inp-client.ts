@@ -4,11 +4,20 @@ import 'isomorphic-fetch'
 import * as fs from 'fs'
 import * as _ from 'lodash'
 import {OptionValues, program} from 'commander'
-import * as inpEndpoints from './inp-endpoints'
 import {Buffer} from 'buffer'
 import path from "path";
-import {EndpointsDefinitions} from "./types";
-import {init as initConfig, getAuthToken} from "./config";
+import chalk from 'chalk'
+import * as inpEndpoints from './inp-endpoints'
+import {
+    EndpointScriptDefinition,
+    EndpointScript,
+    EndpointsDefinition,
+    Endpoint,
+    SavedIntegration, Script
+} from "./types";
+import {init as initConfig, getAuthToken, getClientId, getBaseUrl, getUserId, getCustomerId} from "./config";
+
+const createdIntegrationFileName = 'created-integration.json'
 
 type CmdLineArgs = {
     createIntegration?: string,
@@ -17,17 +26,24 @@ type CmdLineArgs = {
     withRegistration: boolean,
     withAuthConfig: boolean,
     withAuth: boolean,
+    authenticate?: string,
+    postResults?: string,
+    payload?: string,
+    printSummary?: string,
     envFile?: string,
 }
 
 program
-    .option('-p, --param [parameters...]', 'parameters')
     .option('-c, --create-integration <folder>', 'Create integration from payloads')
     .option('-u, --update-scripts <folder>', 'Update scripts from existing saved integration.')
     .option('-t, --fetch-token <folder>', 'Only fetch auth token')
     .option('-r, --with-registration', 'Create a new integration including registration', false)
     .option('-f, --with-auth-config', 'Create a new integration including auth config derived from registration', false)
     .option('-a, --with-auth', 'Fetch auth token and add Authorization HTTP header', false)
+    .option('-t, --authenticate <folder>', `Calls /authenticate endpoint and prints OAuth URL`)
+    .option('-p, --post-results <folder>', `Calls /results endpoint and prints the response`)
+    .option('-l, --payload <file>', `File name to to load payload from`)
+    .option('-s, --print-summary <folder>', `Prints created integration summary from saved resource ${createdIntegrationFileName}`)
     .option('-e, --env-file <name>','Overrides default .env file name', '.env')
 program.parse()
 
@@ -44,8 +60,12 @@ async function main(args: OptionValues) {
         withRegistration,
         withAuth,
         withAuthConfig,
+        authenticate: authenticateFolder,
+        postResults: postResultsFolder,
+        payload: payloadFileName,
+        printSummary: printSummaryFolder,
         envFile,
-    }: CmdLineArgs = args as any
+    }: CmdLineArgs = args as CmdLineArgs
 
     if (createIntegrationFolder) {
         console.log(`Will create integration from ${createIntegrationFolder} withRegistration=${withRegistration}, withAuthConfig=${withAuthConfig}, withAuth=${withAuth}`)
@@ -59,6 +79,15 @@ async function main(args: OptionValues) {
         const token = getAuthToken()
         console.log(`Got token=${token}`)
         saveResource(token!, 'token.txt', fetchTokenFolder)
+    } else if (authenticateFolder) {
+        await initConfig(authenticateFolder, envFile, withAuth)
+        return authenticateMain(authenticateFolder)
+    } else if (printSummaryFolder) {
+        await initConfig(printSummaryFolder, envFile, withAuth)
+        return printSummaryMain(printSummaryFolder)
+    } else if (postResultsFolder) {
+        await initConfig(postResultsFolder, envFile, withAuth)
+        return postResultsMain(postResultsFolder, payloadFileName)
     } else {
         throw new Error(`Cannot determine command from provided arguments: ${Object.keys(args).sort()}`)
     }
@@ -68,8 +97,8 @@ async function createIntegrationMain(bundleDefinitionFolder: string, withRegistr
         console.log('Create integration step')
         return inpEndpoints.createIntegration(loadResource('integration.json', bundleDefinitionFolder))
         .then(async integration => {
-            const endpointDefinitions: EndpointsDefinitions = JSON.parse(loadResource('endpoints.json', bundleDefinitionFolder))
-            const scriptNames = _.uniq(endpointDefinitions.flatMap(endpoint => endpoint.endpointScripts).map(script => script.scriptName))
+            const endpointDefinitions: EndpointsDefinition[] = JSON.parse(loadResource('endpoints.json', bundleDefinitionFolder))
+            const scriptNames = _.uniq(endpointDefinitions.flatMap(endpoint => endpoint.endpointScripts).map((script: EndpointScriptDefinition) => script.scriptName))
             const scriptResources = await Promise.all(scriptNames.map(scriptName => createEndpointScript(integration.id, scriptName, bundleDefinitionFolder)))
             return ({integration, scripts: scriptResources, endpointDefinitions})
         })
@@ -90,7 +119,11 @@ async function createIntegrationMain(bundleDefinitionFolder: string, withRegistr
                 }
                 return inpEndpoints.createEndpoints(result.integration.id, JSON.stringify(endpointScriptRequest))
             }))
-            return ({...result, endpoints})
+            function fillEndPointId(endpoint: Endpoint): Endpoint {
+                const endpointId = endpoint.endpointScripts.map(({endpointId}) => endpointId).find((id) => id)!!
+                return ({id: endpointId, ...endpoint})
+            }
+            return ({...result, endpoints: endpoints.map(fillEndPointId)})
         })
         .then(async integration => {
             console.log(`Registration step: ${withRegistration}`)
@@ -115,23 +148,23 @@ async function createIntegrationMain(bundleDefinitionFolder: string, withRegistr
             return ({...integration, authConfig: authConfigResource})
         })
         .then(result => {
-            saveResource(formatJson(result), 'created-integration.json', bundleDefinitionFolder)
-            console.log(`Integration id=${result.integration.id} created`)
+            saveResource(formatJson(result), createdIntegrationFileName, bundleDefinitionFolder)
+            printSummaryMain(bundleDefinitionFolder)
             return result
         })
         .catch(error => console.error(`Create Integration failed: ${error} ${error.stack}`))
 }
 
 async function updateScripts(bundleDefinitionFolder: string): Promise<any> {
-   const integration = JSON.parse(loadResource('created-integration.json', bundleDefinitionFolder))
+   const integration = loadSavedIntegration(bundleDefinitionFolder)
    const allScripts = integration
        .endpoints
-       .flatMap((endpoint: any) => endpoint.endpointScripts)
-       .map((endpoints: any) => endpoints.scriptId)
+       .flatMap((endpoint: Endpoint) => endpoint.endpointScripts)
+       .map((endpoints: EndpointScript) => endpoints.scriptId)
        .flatMap((scriptId: string) => integration
            .scripts
-           .filter(((script: any) => script.id === scriptId)))
-       .map((script: any) => ({
+           .filter(((script: Script) => script.id === scriptId)))
+       .map((script: Script) => ({
           ...script,
           scriptSource: loadScript(script.name, bundleDefinitionFolder)
        }))
@@ -146,7 +179,7 @@ async function updateScripts(bundleDefinitionFolder: string): Promise<any> {
             return inpEndpoints.updateScript(id, link.href, scriptSource).then(() => `Script id=${id}, name=${name} was successfully updated.`)
         }
     }))
-    console.log(results)
+    console.log(`Script updates results: ${results.join(', ')}`)
 }
 
 function loadScript(scriptName: string, bundleDefinitionFolder: string): string {
@@ -171,7 +204,10 @@ function formatJson(object: any): string {
     return JSON.stringify(object, null, 2)
 }
 
-function loadResource(name: string, folder: string = '.'): string {
+function loadResource(name?: string, folder: string = '.'): string {
+    if (!name) {
+        throw new Error(`loadResource is missing required argument 'name'`)
+    }
     const fileName = path.join(path.resolve(folder), name)
     console.log(`Loading resource from ${fileName}`)
     return Buffer.from(fs.readFileSync(fileName)).toString()
@@ -181,6 +217,52 @@ function saveResource(content: string, name: string, folder: string = '.'): void
     const fileName = path.join(path.resolve(folder), name)
     console.log(`Saving resource to ${fileName}`)
     fs.writeFileSync(fileName, content)
+}
+
+function loadSavedIntegration(bundleDefinitionFolder: string): SavedIntegration {
+    return JSON.parse(loadResource(createdIntegrationFileName, bundleDefinitionFolder))
+}
+
+function authenticateMain(bundleFolder: string): Promise<any> {
+    const integration = loadSavedIntegration(bundleFolder)
+    return inpEndpoints.authenticate(integration.integration.id)
+        .then((authResponse) => {
+            console.log(`Auth url=${authResponse.url}`)
+            saveResource(authResponse.url, 'auth-url.txt', bundleFolder)
+        })
+}
+
+function printSummaryMain(bundleDefinitionFolder: string): void {
+    const print = (...args: any[]) => console.log(chalk.green(...args))
+    const integration = loadSavedIntegration(bundleDefinitionFolder)
+    const integrationId = integration.integration.id
+    print('*** Integration summary ***')
+    print(`baseUrl=${getBaseUrl()}`)
+    print(`customerId=${getCustomerId()}`)
+    print(`userId=${getUserId()}`)
+    print('Integration:')
+    print(`\tintegrationId=${integrationId}`)
+    print('Endpoints:')
+    function formatEndpointScripts({scriptId, functionName, endpointScriptType}: EndpointScript): string {
+        return `\n\t\tscriptId=${scriptId} functionName=${functionName} endpointScriptType=${endpointScriptType}`
+    }
+    integration.endpoints.forEach(endpoint => print(
+        `\tendpointId=${endpoint.id} name=${endpoint.name
+        }\n\tEndpoint scripts:${
+           endpoint.endpointScripts.map(formatEndpointScripts)}`))
+    print(`registrationId=${integration.registration?.id}`)
+}
+
+function postResultsMain(bundleFolder: string, payloadFileName?: string): Promise<void> {
+    const {integration: {id: integrationId}, endpoints} = loadSavedIntegration(bundleFolder)
+    // TODO validate endpoint type, now it relies on the only available endpoint is onDemand
+    const endpointId = endpoints[0].id!!
+    const payload = loadResource(payloadFileName, bundleFolder)
+    return inpEndpoints.postResults(integrationId, endpointId, payload)
+        .then(result => {
+            console.log('Results:')
+            logAsJson(result)
+        })
 }
 
 function logAsJson(object: any): any {

@@ -48,6 +48,7 @@ export function createIntegration(integrationPayload: string) {
         ...defaultOptions,
         body: integrationPayload,
     }
+    console.log(`Creating integration (resource) at url=${url}`)
     return fetch(url, options)
         .then(getSuccessJson(async response =>  new Error(`Create integration failed: ${await response.text()}`)))
         .then(fillResourceId('integrations'))
@@ -59,7 +60,7 @@ export async function uploadJavascript(integrationId: string, scriptName: string
         language: 'js'
     }
     const url = `${getBaseUrl()}/integrations/${integrationId}/scripts?${qs.stringify(parameters)}`
-    console.log(`uploadJavascript ${scriptName} url=${url}`)
+    console.log(`Initial script ${scriptName} upload t url=${url}`)
     const defaultPostOptions = getDefaultPostOptions(getAuthToken())
     const options: RequestInit = {
         ...defaultPostOptions,
@@ -83,7 +84,7 @@ export async function createEndpoints(integrationId: string, endpointsPayload: s
 
 export async function createRegistration(integrationId: string, registrationPayload: string) {
     const url = `${getBaseUrl()}/integrations/${integrationId}/registrations`
-    // console.log(`createRegistration url=${url}, payload=${registrationPayload}`)
+    console.log(`Creating registration url=${url}`)
     const options: RequestInit = {
         ...getDefaultPostOptions(getAuthToken()),
         body: registrationPayload,
@@ -99,25 +100,44 @@ export async function createAuthConfig(integrationId: string, authConfigPayload:
         ...getDefaultPostOptions(getAuthToken()),
         body: authConfigPayload,
     }
+    console.log(`Creating authConfigurations at url=${url}`)
     return fetch(url, options)
         .then(getSuccessJson(new Error(`Create auth configuration for integrationId=${integrationId} failed`)))
 }
 
 export function updateScript(id: string, href: string, source: string): Promise<any> {
-    // hack to make URL from links when integration service is used as base URL instead of gateway API URL - strip leading /integrationservice
-    const url = getBaseUrl().includes('integration-service')
-        ? `${getBaseUrl()}${href.replace('/integrationservice', '')}`
-        : `${getBaseUrl()}${href}`
-    const defaultPostOptions = getDefaultPostOptions()
+    const defaultPostOptions = getDefaultPostOptions(getAuthToken())
     const options: RequestInit = {
         ...defaultPostOptions,
         headers: {...defaultPostOptions.headers, 'Content-Type': 'text/plain'},
         method: 'PUT',
         body: source,
     }
-    console.log(`updateScript id=${id} at url=${url}`)
+    const url = getLinkUrl(href)
+    console.log(`Updating script id=${id} at url=${url}`)
     return fetch(url, options)
         .then(getSuccessJson(new Error(`Update scriptId=${id} failed.`)))
+}
+
+export function authenticate(integrationId: string): Promise<any> {
+    const options: RequestInit = {
+        ...getDefaultPostOptions(getAuthToken())
+    }
+    const url = `${getBaseUrl()}/integrations/${integrationId}/authenticate`
+    console.log(`Calling authenticate at url=${url}`)
+    return fetch(url, options)
+        .then(getSuccessJson(new Error(`Authenticate failed`)))
+}
+
+export function postResults(integrationId: string, endpointId: string, payload: string) {
+    const options: RequestInit = {
+        ...getDefaultPostOptions(getAuthToken()),
+        body: payload
+    }
+    const url = `${getBaseUrl()}/integrations/${integrationId}/endpoints/${endpointId}/results`
+    console.log(`Calling /results at url=${url} with payload=${payload}`)
+    return fetch(url, options)
+        .then(getSuccessJson(new Error(`Post results from url=${url} failed`)))
 }
 
 function getResourceId(object: any, name: string): string {
@@ -135,7 +155,19 @@ function getResourceId(object: any, name: string): string {
 
 function fillResourceId(resourceName: string): any {
     return (object: any) => ({
+        id: getResourceId(object, resourceName),
         ...object,
-        id: getResourceId(object, resourceName)
     })
+}
+
+/**
+ * Hack to make URL from links when integration service is used as base URL instead of gateway API URL - strip leading /integrationservice
+ * Accepts INP_BASE_URL like https://integration-service.region.domain.com or https://api.region.domain.com/integrationservice
+ * @param link
+ * @return absolute link URL
+ */
+function getLinkUrl(link: string): string {
+    return getBaseUrl().includes('integration-service')
+        ? `${getBaseUrl()}${link.replace('/integrationservice', '')}`
+        : `${getBaseUrl()}${link}`
 }
