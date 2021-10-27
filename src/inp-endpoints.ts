@@ -1,7 +1,7 @@
 import 'isomorphic-fetch'
 import qs from 'qs'
-import {getSuccessJson} from "./lib/validation";
-import {getAuthToken, getIntegrationServiceUrl, getCustomerId, getUserId, getGatewayApiUrl} from './config'
+import {getAppServiceUrl, getAuthToken, getIntegrationServiceUrl, getCustomerId, getUserId, getGatewayApiUrl} from './config'
+import {getSuccessJson, getSuccessText} from "./lib/validation";
 import {Dictionary} from "./types";
 
 const contentTypeJsonHeader: Dictionary = {'Content-Type': 'application/json'}
@@ -50,7 +50,7 @@ export function createIntegration(integrationPayload: string) {
     }
     console.log(`Creating integration (resource) at url=${url}`)
     return fetch(url, options)
-        .then(getSuccessJson(async response =>  new Error(`Create integration failed: ${await response.text()}`)))
+        .then(getSuccessJson(async response =>  new Error(`Create integration failed: ${response.status} ${response.statusText} ${await response.text()}`)))
         .then(fillResourceId('integrations'))
 }
 
@@ -170,4 +170,33 @@ function getLinkUrl(link: string): string {
     return getIntegrationServiceUrl().includes('integration-service')
         ? `${getIntegrationServiceUrl()}${link.replace('/integrationservice', '')}`
         : `${getGatewayApiUrl()}${link}`
+}
+
+
+////////////////////////
+////   Feed cards  /////
+////////////////////////
+
+export function updateBladeTemplate(bladeTemplateId: string, template: string | object) {
+    const url = `${getAppServiceUrl()}/api/bladeTemplates/${bladeTemplateId}`
+    const options: RequestInit = {
+        ...getDefaultPostOptions(getAuthToken()),
+        method: 'PUT',
+        body: typeof template === 'string' ? template : JSON.stringify(template)
+    }
+    console.log(`Updating BladeTemplate id=${bladeTemplateId}`)
+    return fetch(url, options)
+        .then(getSuccessText(`Can't update BladeTemplate id=${bladeTemplateId}`))
+}
+
+export function updateNotificationTemplate(notificationTemplateId: string, template: string | object) {
+    const url = `${getAppServiceUrl()}/api/notificationTemplates/${notificationTemplateId}`
+    const options: RequestInit = {
+        ...getDefaultPostOptions(getAuthToken()),
+        method: 'PUT',
+        body: typeof template === 'string' ? template : JSON.stringify(template)
+    }
+    console.log(`Updating notificationTemplate id=${notificationTemplateId}`)
+    return fetch(url, options)
+        .then(getSuccessText(`Can't update notificationTemplate id=${notificationTemplateId}`))
 }

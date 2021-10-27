@@ -4,10 +4,11 @@ import path from 'path'
 import fs from 'fs'
 import dotenv from 'dotenv'
 import {Dictionary} from "./types";
-import {getSuccessJson, getSuccessText} from "./lib/validation";
+import {getSuccessJson} from "./lib/validation";
 
 const config: {
     integrationServiceUrl?: string,
+    appServiceUrl?: string,
     customerId?: string,
     userId?: string,
     clientId?: string,
@@ -37,6 +38,7 @@ export async function init(envFolder: string = '.', envName: string = '.env', wi
         CLIENT_SECRET,
         TRUST_AUTH_URL,
         GATEWAY_API_URL,
+        APP_SERVICE_URL,
     }: Dictionary = process.env
 
     config.integrationServiceUrl = INTEGRATION_SERVICE_URL || INP_BASE_URL
@@ -50,6 +52,7 @@ export async function init(envFolder: string = '.', envName: string = '.env', wi
     config.clientId = CLIENT_ID
     config.clientSecret = CLIENT_SECRET
     config.gatewayApiUrl = GATEWAY_API_URL || TRUST_AUTH_URL
+    config.appServiceUrl = APP_SERVICE_URL
 
     if (TRUST_AUTH_URL && !GATEWAY_API_URL) {
       console.warn(`*** TRUST_AUTH_URL is deprecated, please rename it to GATEWAY_API_URL, used url=${config.gatewayApiUrl} ***`)
@@ -70,6 +73,11 @@ export function getIntegrationServiceUrl(): string {
     return `${getGatewayApiUrl()}/integrationservice`
   }
 }
+
+export function getAppServiceUrl(): string {
+    return notEmpty(config, 'appServiceUrl')
+}
+
 
 export function getUserId(): string | undefined {
     return getValue(config, 'userId')
