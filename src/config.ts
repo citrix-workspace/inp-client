@@ -7,12 +7,12 @@ import {Dictionary} from "./types";
 import {getSuccessJson, getSuccessText} from "./lib/validation";
 
 const config: {
-    baseUrl?: string,
+    integrationServiceUrl?: string,
     customerId?: string,
     userId?: string,
     clientId?: string,
     clientSecret?: string,
-    trustAuthUrl?: string,
+    gatewayApiUrl?: string,
     authToken?: string,
 } = {}
 
@@ -30,37 +30,45 @@ export async function init(envFolder: string = '.', envName: string = '.env', wi
 
     const {
         INP_BASE_URL,
+        INTEGRATION_SERVICE_URL,
         CUSTOMER_ID,
         USER_ID,
         CLIENT_ID,
         CLIENT_SECRET,
         TRUST_AUTH_URL,
+        GATEWAY_API_URL,
     }: Dictionary = process.env
 
-    config.baseUrl = INP_BASE_URL
+    config.integrationServiceUrl = INTEGRATION_SERVICE_URL || INP_BASE_URL
+    if (INP_BASE_URL && !INTEGRATION_SERVICE_URL) {
+      console.warn(`*** INP_BASE_URL is deprecated, please rename it to INTEGRATION_SERVICE_URL, used url=${config.integrationServiceUrl} ***`)
+    } else if (INP_BASE_URL && INTEGRATION_SERVICE_URL) {
+      console.warn(`INP_BASE_URL is deprecated, INTEGRATION_SERVICE_URL is used instead, used url=${config.integrationServiceUrl}.`)
+    }
     config.customerId = CUSTOMER_ID
     config.userId = USER_ID
     config.clientId = CLIENT_ID
     config.clientSecret = CLIENT_SECRET
-    config.trustAuthUrl = TRUST_AUTH_URL
+    config.gatewayApiUrl = GATEWAY_API_URL || TRUST_AUTH_URL
 
-    const argsJsonPath = path.join(envFolder, 'args.json')
-    if (fs.existsSync(argsJsonPath)) {
-        console.log(`args.json exists at ${argsJsonPath}, processing.`)
-        const args = JSON.parse(fs.readFileSync(argsJsonPath).toString())
-        overrideIfNotEmpty(config, args, 'userId')
-        overrideIfNotEmpty(config, args, 'customerId')
-        overrideIfNotEmpty(config, args, 'bearerToken')
-    } else {
-        console.log(`args.json does not exists at ${argsJsonPath}, skipping.`)
+    if (TRUST_AUTH_URL && !GATEWAY_API_URL) {
+      console.warn(`*** TRUST_AUTH_URL is deprecated, please rename it to GATEWAY_API_URL, used url=${config.gatewayApiUrl} ***`)
+    } else if (TRUST_AUTH_URL && GATEWAY_API_URL) {
+      console.warn(`TRUST_AUTH_URL is deprecated, GATEWAY_API_URL is used instead, used url=${config.gatewayApiUrl}`)
     }
+
     if (withAuth) {
         config.authToken = await fetchAuthToken()
     }
 }
 
-export function getBaseUrl(): string {
-    return notEmpty(config, 'baseUrl')
+export function getIntegrationServiceUrl(): string {
+  const url = getValue(config, 'integrationServiceUrl')
+  if (url) {
+    return url
+  } else {
+    return `${getGatewayApiUrl()}/integrationservice`
+  }
 }
 
 export function getUserId(): string | undefined {
@@ -79,8 +87,8 @@ export function getClientSecret() {
     return notEmpty(config, 'clientSecret')
 }
 
-export function getTrustAuthUrl() {
-    return notEmpty(config, 'trustAuthUrl')
+export function getGatewayApiUrl() {
+    return notEmpty(config, 'gatewayApiUrl')
 }
 
 export function getAuthToken() {
@@ -105,13 +113,6 @@ function notEmpty(config: Dictionary, name: string): string {
     return value
 }
 
-function overrideIfNotEmpty(config: Dictionary, args: Dictionary, name: string) {
-    try {
-        config[name] = notEmpty(args, name)
-    } catch (ignored) {
-    }
-}
-
 function fetchAuthToken(): Promise<string> {
     const options: RequestInit = {
         method: "POST",
@@ -125,7 +126,7 @@ function fetchAuthToken(): Promise<string> {
             client_secret: getClientSecret(),
         }),
     };
-    const url = `${getTrustAuthUrl()}/cctrustoauth2/${getCustomerId()}/tokens/clients`
+    const url = `${getGatewayApiUrl()}/cctrustoauth2/${getCustomerId()}/tokens/clients`
     console.log(`Fetching token from ${url}, with payload=${options.body}`)
     return fetch(url, options)
         .then(getSuccessJson(new Error(`Can't get bearer token for ${getClientId()}`)))

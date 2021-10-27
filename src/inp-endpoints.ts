@@ -1,7 +1,7 @@
 import 'isomorphic-fetch'
 import qs from 'qs'
 import {getSuccessJson} from "./lib/validation";
-import {getAuthToken, getBaseUrl, getCustomerId, getUserId} from "./config";
+import {getAuthToken, getIntegrationServiceUrl, getCustomerId, getUserId, getGatewayApiUrl} from './config'
 import {Dictionary} from "./types";
 
 const contentTypeJsonHeader: Dictionary = {'Content-Type': 'application/json'}
@@ -42,7 +42,7 @@ function bearerAuthHeader(token?: string): Dictionary {
 }
 
 export function createIntegration(integrationPayload: string) {
-    const url = `${getBaseUrl()}/integrations`
+    const url = `${getIntegrationServiceUrl()}/integrations`
     const defaultOptions = getDefaultPostOptions(getAuthToken())
     const options: RequestInit = {
         ...defaultOptions,
@@ -59,7 +59,7 @@ export async function uploadJavascript(integrationId: string, scriptName: string
         name: scriptName,
         language: 'js'
     }
-    const url = `${getBaseUrl()}/integrations/${integrationId}/scripts?${qs.stringify(parameters)}`
+    const url = `${getIntegrationServiceUrl()}/integrations/${integrationId}/scripts?${qs.stringify(parameters)}`
     console.log(`Initial script ${scriptName} upload t url=${url}`)
     const defaultPostOptions = getDefaultPostOptions(getAuthToken())
     const options: RequestInit = {
@@ -73,7 +73,7 @@ export async function uploadJavascript(integrationId: string, scriptName: string
 
 export async function createEndpoints(integrationId: string, endpointsPayload: string) {
     console.log(`Creating endpoint ${JSON.parse(endpointsPayload).name}`)
-    const url = `${getBaseUrl()}/integrations/${integrationId}/endpoints`
+    const url = `${getIntegrationServiceUrl()}/integrations/${integrationId}/endpoints`
     const options: RequestInit = {
         ...getDefaultPostOptions(getAuthToken()),
         body: endpointsPayload,
@@ -83,7 +83,7 @@ export async function createEndpoints(integrationId: string, endpointsPayload: s
 }
 
 export async function createRegistration(integrationId: string, registrationPayload: string) {
-    const url = `${getBaseUrl()}/integrations/${integrationId}/registrations`
+    const url = `${getIntegrationServiceUrl()}/integrations/${integrationId}/registrations`
     console.log(`Creating registration url=${url}`)
     const options: RequestInit = {
         ...getDefaultPostOptions(getAuthToken()),
@@ -95,7 +95,7 @@ export async function createRegistration(integrationId: string, registrationPayl
 }
 
 export async function createAuthConfig(integrationId: string, authConfigPayload: string) {
-    const url = `${getBaseUrl()}/integrations/${integrationId}/authConfigurations`
+    const url = `${getIntegrationServiceUrl()}/integrations/${integrationId}/authConfigurations`
     const options: RequestInit = {
         ...getDefaultPostOptions(getAuthToken()),
         body: authConfigPayload,
@@ -123,7 +123,7 @@ export function authenticate(integrationId: string): Promise<any> {
     const options: RequestInit = {
         ...getDefaultPostOptions(getAuthToken())
     }
-    const url = `${getBaseUrl()}/integrations/${integrationId}/authenticate`
+    const url = `${getIntegrationServiceUrl()}/integrations/${integrationId}/authenticate`
     console.log(`Calling authenticate at url=${url}`)
     return fetch(url, options)
         .then(getSuccessJson(new Error(`Authenticate failed`)))
@@ -134,7 +134,7 @@ export function postResults(integrationId: string, endpointId: string, payload: 
         ...getDefaultPostOptions(getAuthToken()),
         body: payload
     }
-    const url = `${getBaseUrl()}/integrations/${integrationId}/endpoints/${endpointId}/results`
+    const url = `${getIntegrationServiceUrl()}/integrations/${integrationId}/endpoints/${endpointId}/results`
     console.log(`Calling /results at url=${url} with payload=${payload}`)
     return fetch(url, options)
         .then(getSuccessJson(new Error(`Post results from url=${url} failed`)))
@@ -167,7 +167,7 @@ function fillResourceId(resourceName: string): any {
  * @return absolute link URL
  */
 function getLinkUrl(link: string): string {
-    return getBaseUrl().includes('integration-service')
-        ? `${getBaseUrl()}${link.replace('/integrationservice', '')}`
-        : `${getBaseUrl()}${link}`
+    return getIntegrationServiceUrl().includes('integration-service')
+        ? `${getIntegrationServiceUrl()}${link.replace('/integrationservice', '')}`
+        : `${getGatewayApiUrl()}${link}`
 }

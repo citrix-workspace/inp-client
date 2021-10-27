@@ -15,7 +15,13 @@ import {
     Endpoint,
     SavedIntegration, Script
 } from "./types";
-import {init as initConfig, getAuthToken, getClientId, getBaseUrl, getUserId, getCustomerId} from "./config";
+import {
+  init as initConfig,
+  getAuthToken,
+  getUserId,
+  getCustomerId,
+  getGatewayApiUrl, getIntegrationServiceUrl,
+} from './config'
 
 const createdIntegrationFileName = 'created-integration.json'
 
@@ -237,7 +243,8 @@ function printSummaryMain(bundleDefinitionFolder: string): void {
     const integration = loadSavedIntegration(bundleDefinitionFolder)
     const integrationId = integration.integration.id
     print('*** Integration summary ***')
-    print(`baseUrl=${getBaseUrl()}`)
+    print(`gatewayApiUrl=${getGatewayApiUrl()}`)
+    print(`integrationServiceUrl=${getIntegrationServiceUrl()}`)
     print(`customerId=${getCustomerId()}`)
     print(`userId=${getUserId()}`)
     print('Integration:')
