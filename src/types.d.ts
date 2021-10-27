@@ -51,8 +51,14 @@ export interface Registration {
 }
 
 export interface SavedIntegration {
-    integration: IntegrationResource,
-    endpoints: Endpoint[],
-    scripts: Script[],
-    registration: Registration,
+  integration: IntegrationResource,
+  endpoints: Endpoint[],
+  scripts: Script[],
+  registration: Registration,
+  feeds: {
+    [feedName: string]: {
+      blade: { id: string },
+      notification: { id: string },
+    }
+  }
 }

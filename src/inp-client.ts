@@ -5,8 +5,9 @@ import * as fs from 'fs'
 import * as _ from 'lodash'
 import {OptionValues, program} from 'commander'
 import {Buffer} from 'buffer'
-import path from "path";
+import path from 'path'
 import chalk from 'chalk'
+import mustache from 'mustache'
 import * as inpEndpoints from './inp-endpoints'
 import {
     EndpointScriptDefinition,
@@ -16,6 +17,8 @@ import {
     SavedIntegration, Script
 } from "./types";
 import {init as initConfig, getAuthToken, getClientId, getBaseUrl, getUserId, getCustomerId} from "./config";
+import {updateBladeTemplate, updateNotificationTemplate} from "./inp-endpoints";
+import Mustache from 'mustache'
 
 const createdIntegrationFileName = 'created-integration.json'
 
@@ -30,6 +33,7 @@ type CmdLineArgs = {
     postResults?: string,
     payload?: string,
     printSummary?: string,
+    updateFeedCard: string,
     envFile?: string,
 }
 
@@ -43,6 +47,7 @@ program
     .option('-t, --authenticate <folder>', `Calls /authenticate endpoint and prints OAuth URL`)
     .option('-p, --post-results <folder>', `Calls /results endpoint and prints the response`)
     .option('-l, --payload <file>', `File name to to load payload from`)
+    .option('--update-feed-card <folder>', `Update feed card`)
     .option('-s, --print-summary <folder>', `Prints created integration summary from saved resource ${createdIntegrationFileName}`)
     .option('-e, --env-file <name>','Overrides default .env file name', '.env')
 program.parse()
@@ -64,6 +69,7 @@ async function main(args: OptionValues) {
         postResults: postResultsFolder,
         payload: payloadFileName,
         printSummary: printSummaryFolder,
+        updateFeedCard: updateFeedCardFolder,
         envFile,
     }: CmdLineArgs = args as CmdLineArgs
 
@@ -88,6 +94,9 @@ async function main(args: OptionValues) {
     } else if (postResultsFolder) {
         await initConfig(postResultsFolder, envFile, withAuth)
         return postResultsMain(postResultsFolder, payloadFileName)
+    } else if (updateFeedCardFolder) {
+        await initConfig(updateFeedCardFolder, envFile, withAuth)
+        return updateFeedCard(updateFeedCardFolder)
     } else {
         throw new Error(`Cannot determine command from provided arguments: ${Object.keys(args).sort()}`)
     }
@@ -255,8 +264,9 @@ function printSummaryMain(bundleDefinitionFolder: string): void {
 
 function postResultsMain(bundleFolder: string, payloadFileName?: string): Promise<void> {
     const {integration: {id: integrationId}, endpoints} = loadSavedIntegration(bundleFolder)
-    // TODO validate endpoint type, now it relies on the only available endpoint is onDemand
-    const endpointId = endpoints[0].id!!
+    const onDemandEndpoint = endpoints.find(endpoint => endpoint.endpointType.toLowerCase() === 'ondemand' && endpoint.category.toLowerCase() === 'search')!!
+    // TODO validate that there are no more onDemand endpoints
+    const endpointId = onDemandEndpoint.endpointScripts.map(({endpointId}) => endpointId).find(id => id != null)!!
     const payload = loadResource(payloadFileName, bundleFolder)
     return inpEndpoints.postResults(integrationId, endpointId, payload)
         .then(result => {
@@ -268,6 +278,26 @@ function postResultsMain(bundleFolder: string, payloadFileName?: string): Promis
             }
             return result
         })
+}
+
+async function updateFeedCard(bundleFolder: string): Promise<void> {
+    const integration = loadSavedIntegration(bundleFolder)
+    const {feeds} = integration
+    await Promise.all(Object.keys(feeds)
+      .map(feedName => ({feedName, ...feeds[feedName]}))
+      .map(async ({feedName, blade, notification}) => {
+        // customTags could be configured Mustache.tags = ['%', '%' ]
+        const bladeTemplateResource = mustache.render(loadResource(path.join('feeds', `blade_${feedName}.json`), bundleFolder), {}, {},  [ '%', '%' ] )
+        // const bladeTemplateResource = loadResource(path.join('feeds', `blade_${feedName}.json`), bundleFolder).replace('%BLADE_ID%', blade.id)
+        console.log(`updating blade ${bladeTemplateResource}`)
+        await updateBladeTemplate(blade.id, bladeTemplateResource)
+        console.log(`Blade for ${feedName} updated with saved blade meta ${JSON.stringify(blade)}`)
+
+        const notificationResource = mustache.render(loadResource(path.join('feeds', `notification_${feedName}.json`), bundleFolder), {'BLADE_ID': blade.id}, {},  [ '%', '%' ])
+        console.log(`updating notification\n\n${JSON.stringify(JSON.parse(notificationResource), null, 2)}\n\n`)
+        await updateNotificationTemplate(notification.id, notificationResource)
+        console.log(`Notification for ${feedName} updated, saved notification meta ${JSON.stringify(notification)}, notification to update: ${notificationResource}`)
+      }))
 }
 
 function logAsJson(object: any): any {

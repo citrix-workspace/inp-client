@@ -4,10 +4,11 @@ import path from 'path'
 import fs from 'fs'
 import dotenv from 'dotenv'
 import {Dictionary} from "./types";
-import {getSuccessJson, getSuccessText} from "./lib/validation";
+import {getSuccessJson} from "./lib/validation";
 
 const config: {
     baseUrl?: string,
+    appServiceUrl?: string,
     customerId?: string,
     userId?: string,
     clientId?: string,
@@ -35,6 +36,7 @@ export async function init(envFolder: string = '.', envName: string = '.env', wi
         CLIENT_ID,
         CLIENT_SECRET,
         TRUST_AUTH_URL,
+        APP_SERVICE_URL,
     }: Dictionary = process.env
 
     config.baseUrl = INP_BASE_URL
@@ -43,6 +45,7 @@ export async function init(envFolder: string = '.', envName: string = '.env', wi
     config.clientId = CLIENT_ID
     config.clientSecret = CLIENT_SECRET
     config.trustAuthUrl = TRUST_AUTH_URL
+    config.appServiceUrl = APP_SERVICE_URL
 
     const argsJsonPath = path.join(envFolder, 'args.json')
     if (fs.existsSync(argsJsonPath)) {
@@ -62,6 +65,11 @@ export async function init(envFolder: string = '.', envName: string = '.env', wi
 export function getBaseUrl(): string {
     return notEmpty(config, 'baseUrl')
 }
+
+export function getAppServiceUrl(): string {
+    return notEmpty(config, 'appServiceUrl')
+}
+
 
 export function getUserId(): string | undefined {
     return getValue(config, 'userId')
