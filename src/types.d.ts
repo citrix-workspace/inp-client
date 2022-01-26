@@ -44,6 +44,7 @@ export interface Script {
 
 export interface IntegrationResource {
     id: string,
+    globalId: string,
 }
 
 export interface Registration {

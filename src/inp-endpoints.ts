@@ -54,6 +54,17 @@ export function createIntegration(integrationPayload: string) {
         .then(fillResourceId('integrations'))
 }
 
+export function getIntegration(id: string): Promise<any> {
+  const url = `${getIntegrationServiceUrl()}/integrations/${id}?includeAllLocale=true`
+  const options: RequestInit = {
+    ...getDefaultPostOptions(getAuthToken()),
+    method: 'GET',
+  }
+  console.log(`Fetching integration from=${url}, options=${JSON.stringify(options)}`)
+  return fetch(url, options)
+    .then(getSuccessJson(`Cannot fetch integrationId=${id}`))
+}
+
 export async function uploadJavascript(integrationId: string, scriptName: string, code: string): Promise<any> {
     const parameters = {
         name: scriptName,
@@ -82,6 +93,18 @@ export async function createEndpoints(integrationId: string, endpointsPayload: s
         .then(getSuccessJson(new Error(`Create endpoints for integrationId=${integrationId} failed`)))
 }
 
+export async function getEndpoints(integrationId: string): Promise<any> {
+  const url = `${getIntegrationServiceUrl()}/integrations/${integrationId}/endpoints`
+  const options: RequestInit = {
+    ...getDefaultPostOptions(getAuthToken()),
+    method: 'GET',
+  }
+  console.log(`Fetching endpoints for integration id=${integrationId} endpoints from=${url}, options=${JSON.stringify(options)}`)
+  return fetch(url, options)
+    .then(getSuccessJson(`Cannot fetch endpoints from ${url}`))
+    .then(response => response.items)
+}
+
 export async function createRegistration(integrationId: string, registrationPayload: string) {
     const url = `${getIntegrationServiceUrl()}/integrations/${integrationId}/registrations`
     console.log(`Creating registration url=${url}`)
@@ -105,6 +128,18 @@ export async function createAuthConfig(integrationId: string, authConfigPayload:
         .then(getSuccessJson(new Error(`Create auth configuration for integrationId=${integrationId} failed`)))
 }
 
+export async function getScripts(integrationId: string): Promise<any> {
+  const url = `${getIntegrationServiceUrl()}/integrations/${integrationId}/scripts`
+  const options: RequestInit = {
+    ...getDefaultPostOptions(getAuthToken()),
+    method: 'GET',
+  }
+  console.log(`Fetching scripts for integration id=${integrationId} scripts from=${url}, options=${JSON.stringify(options)}`)
+  return fetch(url, options)
+    .then(getSuccessJson(`Cannot fetch scripts from ${url}`))
+    .then(response => response.items)
+}
+
 export function updateScript(id: string, href: string, source: string): Promise<any> {
     const defaultPostOptions = getDefaultPostOptions(getAuthToken())
     const options: RequestInit = {
@@ -123,7 +158,7 @@ export function authenticate(integrationId: string): Promise<any> {
     const options: RequestInit = {
         ...getDefaultPostOptions(getAuthToken())
     }
-    const url = `${getIntegrationServiceUrl()}/integrations/${integrationId}/authenticate`
+    const url = `${getIntegrationServiceUrl()}/integrations/${integrationId}/authentications`
     console.log(`Calling authenticate at url=${url}`)
     return fetch(url, options)
         .then(getSuccessJson(new Error(`Authenticate failed`)))

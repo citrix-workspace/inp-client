@@ -14,17 +14,25 @@ import {
     EndpointScript,
     EndpointsDefinition,
     Endpoint,
-    SavedIntegration, Script
+    SavedIntegration,
+    Script
 } from "./types";
 import {
   init as initConfig,
   getAuthToken,
   getUserId,
   getCustomerId,
-  getGatewayApiUrl, getIntegrationServiceUrl,
+  getGatewayApiUrl,
+  getIntegrationServiceUrl,
 } from './config'
-import {updateBladeTemplate, updateNotificationTemplate} from "./inp-endpoints";
-import Mustache from 'mustache'
+import {
+  getEndpoints,
+  getIntegration,
+  updateBladeTemplate,
+  updateNotificationTemplate,
+  getScripts
+} from './inp-endpoints'
+import {fillEndPointId} from './utils'
 
 const createdIntegrationFileName = 'created-integration.json'
 
@@ -39,8 +47,10 @@ type CmdLineArgs = {
     postResults?: string,
     payload?: string,
     printSummary?: string,
+    saveIntegration?: string,
     updateFeedCard: string,
     envFile?: string,
+    id?: string,
 }
 
 program
@@ -50,17 +60,19 @@ program
     .option('-r, --with-registration', 'Create a new integration including registration', false)
     .option('-f, --with-auth-config', 'Create a new integration including auth config derived from registration', false)
     .option('-a, --with-auth', 'Fetch auth token and add Authorization HTTP header', false)
-    .option('-t, --authenticate <folder>', `Calls /authenticate endpoint and prints OAuth URL`)
+    .option('-h, --authenticate <folder>', `Calls //authentications endpoint and prints OAuth URL`)
     .option('-p, --post-results <folder>', `Calls /results endpoint and prints the response`)
     .option('-l, --payload <file>', `File name to to load payload from`)
     .option('--update-feed-card <folder>', `Update feed card`)
     .option('-s, --print-summary <folder>', `Prints created integration summary from saved resource ${createdIntegrationFileName}`)
+    .option('-s, --save-integration <folder>', `Fetch integration resources and save it to ${createdIntegrationFileName}`)
+    .option('--id <id>', `Specify id for command`)
     .option('-e, --env-file <name>','Overrides default .env file name', '.env')
 program.parse()
 
 main(program.opts())
     .then(() => console.log('Done.'))
-    .catch(error => console.error(`Failed with error: ${error}`))
+    .catch(error => console.error(`Failed with error: ${error} ${error.stack}`))
 
 async function main(args: OptionValues) {
     console.log(`debug info main(${JSON.stringify(args)})`)
@@ -75,8 +87,10 @@ async function main(args: OptionValues) {
         postResults: postResultsFolder,
         payload: payloadFileName,
         printSummary: printSummaryFolder,
+        saveIntegration: saveIntegrationFolder,
         updateFeedCard: updateFeedCardFolder,
         envFile,
+        id,
     }: CmdLineArgs = args as CmdLineArgs
 
     if (createIntegrationFolder) {
@@ -103,11 +117,13 @@ async function main(args: OptionValues) {
     } else if (updateFeedCardFolder) {
         await initConfig(updateFeedCardFolder, envFile, withAuth)
         return updateFeedCard(updateFeedCardFolder)
+    } else if (saveIntegrationFolder) {
+        await initConfig(saveIntegrationFolder, envFile, withAuth)
+        return saveIntegration(saveIntegrationFolder, id)
     } else {
         throw new Error(`Cannot determine command from provided arguments: ${Object.keys(args).sort()}`)
     }
 }
-
 async function createIntegrationMain(bundleDefinitionFolder: string, withRegistration: boolean = false, withAuthConfig: boolean = false): Promise<any> {
         console.log('Create integration step')
         return inpEndpoints.createIntegration(loadResource('integration.json', bundleDefinitionFolder))
@@ -134,10 +150,7 @@ async function createIntegrationMain(bundleDefinitionFolder: string, withRegistr
                 }
                 return inpEndpoints.createEndpoints(result.integration.id, JSON.stringify(endpointScriptRequest))
             }))
-            function fillEndPointId(endpoint: Endpoint): Endpoint {
-                const endpointId = endpoint.endpointScripts.map(({endpointId}) => endpointId).find((id) => id)!!
-                return ({id: endpointId, ...endpoint})
-            }
+
             return ({...result, endpoints: endpoints.map(fillEndPointId)})
         })
         .then(async integration => {
@@ -176,9 +189,8 @@ async function updateScripts(bundleDefinitionFolder: string): Promise<any> {
        .endpoints
        .flatMap((endpoint: Endpoint) => endpoint.endpointScripts)
        .map((endpoints: EndpointScript) => endpoints.scriptId)
-       .flatMap((scriptId: string) => integration
-           .scripts
-           .filter(((script: Script) => script.id === scriptId)))
+       .flatMap((scriptId: string) => (integration.scripts || [])
+           .filter((script: Script) => script.id === scriptId))
        .map((script: Script) => ({
           ...script,
           scriptSource: loadScript(script.name, bundleDefinitionFolder)
@@ -250,19 +262,19 @@ function authenticateMain(bundleFolder: string): Promise<any> {
 function printSummaryMain(bundleDefinitionFolder: string): void {
     const print = (...args: any[]) => console.log(chalk.green(...args))
     const integration = loadSavedIntegration(bundleDefinitionFolder)
-    const integrationId = integration.integration.id
     print('*** Integration summary ***')
     print(`gatewayApiUrl=${getGatewayApiUrl()}`)
     print(`integrationServiceUrl=${getIntegrationServiceUrl()}`)
     print(`customerId=${getCustomerId()}`)
     print(`userId=${getUserId()}`)
     print('Integration:')
-    print(`\tintegrationId=${integrationId}`)
+    print(`\tintegrationId=${integration.integration.id}`)
+    print(`\tglobalId=${integration.integration.globalId}`)
     print('Endpoints:')
     function formatEndpointScripts({scriptId, functionName, endpointScriptType}: EndpointScript): string {
         return `\n\t\tscriptId=${scriptId} functionName=${functionName} endpointScriptType=${endpointScriptType}`
     }
-    integration.endpoints.forEach(endpoint => print(
+    (integration.endpoints || []).forEach(endpoint => print(
         `\tendpointId=${endpoint.id} name=${endpoint.name
         }\n\tEndpoint scripts:${
            endpoint.endpointScripts.map(formatEndpointScripts)}`))
@@ -305,6 +317,22 @@ async function updateFeedCard(bundleFolder: string): Promise<void> {
         await updateNotificationTemplate(notification.id, notificationResource)
         console.log(`Notification for ${feedName} updated, saved notification meta ${JSON.stringify(notification)}, notification to update: ${notificationResource}`)
       }))
+}
+
+async function saveIntegration(bundleFolder: string, id?: string): Promise<void> {
+  if (!id) throw new Error(`'--id' is not specified`)
+  console.log(`Fetching integrationId=${id} from ${getIntegrationServiceUrl()}`)
+  const integrationResource = await getIntegration(id)
+  const endpoints: Endpoint[] = await getEndpoints(id).then(endpoints => endpoints.map(fillEndPointId))
+  console.log(`Got endpoints ${JSON.stringify(endpoints)}`)
+  const scriptResources = await getScripts(id)
+  console.log(`Got scripts ${JSON.stringify(scriptResources)}`)
+  const integration = {
+    integration: integrationResource,
+    endpoints,
+    scripts: scriptResources,
+  }
+  saveResource(JSON.stringify(integration, null, 2), createdIntegrationFileName, bundleFolder)
 }
 
 function logAsJson(object: any): any {
