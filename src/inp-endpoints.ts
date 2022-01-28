@@ -202,9 +202,11 @@ function fillResourceId(resourceName: string): any {
  * @return absolute link URL
  */
 function getLinkUrl(link: string): string {
-    return getIntegrationServiceUrl().includes('integration-service')
-        ? `${getIntegrationServiceUrl()}${link.replace('/integrationservice', '')}`
-        : `${getGatewayApiUrl()}${link}`
+  const integrationServiceUrl = getIntegrationServiceUrl()
+  if (integrationServiceUrl.includes('integration-service') || integrationServiceUrl.includes('localhost')) {
+    return `${getIntegrationServiceUrl()}${link.replace('/integrationservice', '')}`
+  }
+  return `${getGatewayApiUrl()}${link}`
 }
 
 

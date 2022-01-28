@@ -75,7 +75,7 @@ main(program.opts())
     .catch(error => console.error(`Failed with error: ${error} ${error.stack}`))
 
 async function main(args: OptionValues) {
-    console.log(`debug info main(${JSON.stringify(args)})`)
+    console.log(`Running with arguments: ${JSON.stringify(args)}`)
     const {
         createIntegration: createIntegrationFolder,
         updateScripts: updateScriptsFolder,
@@ -262,10 +262,17 @@ function authenticateMain(bundleFolder: string): Promise<any> {
 function printSummaryMain(bundleDefinitionFolder: string): void {
     const print = (...args: any[]) => console.log(chalk.green(...args))
     const integration = loadSavedIntegration(bundleDefinitionFolder)
+    function getOptional(fn: () => string): string {
+      try {
+        return fn()
+      } catch (e) {
+        return e.toString()
+      }
+    }
     print('*** Integration summary ***')
-    print(`gatewayApiUrl=${getGatewayApiUrl()}`)
-    print(`integrationServiceUrl=${getIntegrationServiceUrl()}`)
-    print(`customerId=${getCustomerId()}`)
+    print(`gatewayApiUrl=${getOptional(getGatewayApiUrl)}`)
+    print(`integrationServiceUrl=${getOptional(getIntegrationServiceUrl)}`)
+    print(`customerId=${getOptional(getCustomerId)}`)
     print(`userId=${getUserId()}`)
     print('Integration:')
     print(`\tintegrationId=${integration.integration.id}`)
